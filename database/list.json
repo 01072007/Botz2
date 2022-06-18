@@ -1,0 +1,50 @@
+[
+  {
+    "jid": "120363022504345229@g.us",
+    "cmd": [
+      {
+        "menu": "grab",
+        "harga": " 35k"
+      }
+    ],
+    "sections": [
+      {
+        "title": "Turu",
+        "rows": [
+          {
+            "title": "grab",
+            "rowId": "grab"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "jid": "120363040347349534@g.us",
+    "cmd": [
+      {
+        "menu": "Ff",
+        "harga": "45k"
+      },
+      {
+        "menu": "epep",
+        "harga": "44k"
+      }
+    ],
+    "sections": [
+      {
+        "title": "Bot",
+        "rows": [
+          {
+            "title": "Ff",
+            "rowId": "Ff"
+          },
+          {
+            "title": "epep",
+            "rowId": "epep"
+          }
+        ]
+      }
+    ]
+  }
+]
