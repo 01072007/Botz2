@@ -1,7 +1,7 @@
 [
   {
     "id": "6281235144606@s.whatsapp.net",
-    "limit": 4
+    "limit": 5
   },
   {
     "id": "6287784362530@s.whatsapp.net",
@@ -82,5 +82,9 @@
   {
     "id": "6282141447886@s.whatsapp.net",
     "limit": 5
+  },
+  {
+    "id": "6282276828265@s.whatsapp.net",
+    "limit": 1
   }
 ]

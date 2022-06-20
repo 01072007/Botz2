@@ -82,6 +82,7 @@ const { TiktokDownloader } = require('../lib/tiktokdl')
 const { TelegraPh } = require ('../lib/uploader')
 const { mediafireDl, igstalk } = require('../lib/function')
 const { wikiSearch } = require('../scrape/wiki.js');
+const { Gempa } = require("../scrape/gempa.js");
 
 //━━━━━━━━━━━━━━━[ THUMBNAIL ]━━━━━━━━━━━━━━━━━//
 
@@ -803,6 +804,11 @@ sections: [{
                                                                             "rowId": `${prefix}menuinformation`
                                                                         },
                                                                         {
+                                                                        	"title": "Islami Fitur",
+                                                                            "description": "Menampilkan Fitur Islam",
+                                                                            "rowId": `${prefix}menuislam`
+                                                                        },
+                                                                        {
                                                                         	"title": "Textprome Fitur",
                                                                             "description": "Menampilkan Fitur Texpro",
                                                                             "rowId": `${prefix}textpromenu`
@@ -1013,7 +1019,22 @@ case 'menuinformation':
 menuwh =`*INFORMATION MENU*
 
 • ${prefix}cuaca
-• ${prefix}cekapikey *Lolhuman*`
+• ${prefix}cekapikey *Lolhuman*
+• ${prefix}merdeka-news 
+• ${prefix}kontan-news 
+• ${prefix}cnbc-news 
+• ${prefix}tribun-news 
+• ${prefix}indozone-news 
+• ${prefix}kompas-news 
+• ${prefix}detik-news 
+• ${prefix}daily-news 
+• ${prefix}inews-news 
+• ${prefix}okezone-news 
+• ${prefix}sindo-news 
+• ${prefix}tempo-news 
+• ${prefix}antara-news 
+• ${prefix}cnn-news 
+• ${prefix}fajar-news `
 Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
 break
 case 'store':
@@ -1327,6 +1348,20 @@ menuwh =`*ANONYMOUS MENU*
 • ${prefix}next
 • ${prefix}stop
 • ${prefix}keluar`
+Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
+break
+case 'menuislam':
+menuwh =`*ISLAM MENU*
+
+• ${prefix}alquran
+• ${prefix}alquranaudio
+• ${prefix}listsurah
+• ${prefix}asmaulhusna
+• ${prefix}kisahnabi
+• ${prefix}jadwalsholat
+• ${prefix}iqro
+• ${prefix}juzamma
+• ${prefix}tafsirsurah`
 Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
 break
 case 'rules': case 'snk':
@@ -2397,7 +2432,7 @@ break
 case 'tts':
 if (!q) return m.reply(`Teks Nya???`)
 m.reply(mess.wait)
-inimmk = await fetchJson(`https://api.dapuhy.xyz/api/maker/tts?text=${q}&lang=id&apikey=Kirbotz123`)
+inimmk = await fetchJson(`https://api.dapuhy.xyz/api/maker/tts?text=${q}&lang=id&apikey=Fara123`)
 Fara.sendMessage(m.chat, {audio: { url: inimmk.result }, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
 break
 case 'tovn': case 'toptt': {
@@ -3297,6 +3332,13 @@ m.reply(mess.wait)
 anu = await fetchJson(`https://api.lolhuman.xyz/api/checkapikey?apikey=${q}`)
 m.reply(`*Username* : ${anu.result.username}\n*Requests All* : ${anu.result.requests}\n*Requests Today* : ${anu.result.today}\n*Status Akun* : ${anu.result.account_type}\n*Expered* : ${anu.result.expired}`)
 break 
+case 'gempa': case 'infogempa':
+const tres = await Gempa()
+var { Waktu, Lintang, Bujur, Magnitude, Kedalaman, Wilayah, Map } = tres.result
+console.log(Map)
+const captt = `Waktu : ${Waktu}\nLintang : ${Lintang}\nBujur : ${Bujur}\nWilayah : ${Wilayah}`
+Fara.sendMessage(from, { image : { url : Map }, caption : captt})
+break
 case 'fajar-news':
 FajarNews().then(async(res) => {
 console.log(res) 
@@ -3313,6 +3355,252 @@ teks += `Link: ${i.berita_url}\n`
 teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
 m.reply(teks) 
 })
+break
+case 'cnn-news':
+CNNNews().then(res => {
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+m.reply(teks) 
+})
+break
+case 'cnbc-news':
+CNBCNews().then(async(res) => {
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+case 'tribun-news':
+TribunNews().then(async(res) => {
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+})
+break
+case 'indozone-news':
+IndozoneNews().then(async(res) => {
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+})
+break
+case 'kompas-news':
+KompasNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+case 'detik-news':
+DetikNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+case 'daily-news':
+DailyNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+
+case 'inews-news':
+iNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+ads(teks) 
+})
+break
+case 'okezone-news':
+OkezoneNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+
+case 'sindo-news':
+SindoNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+ads(teks) 
+})
+break
+case 'tempo-news':
+TempoNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+case 'antara-news':
+AntaraNews().then(async(res) => {
+
+no = 0
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+for (let i of res) {
+no += 1
+teks += `\n• ${no.toString()} •\n`
+teks += `Berita: ${i.berita}\n`
+teks += `Upload: ${i.berita_diupload}\n`
+teks += `Jenis: ${i.berita_jenis}\n`
+teks += `Link: ${i.berita_url}\n`
+}
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+})
+break
+
+case "kontan-news":
+  KontanNews().then(async (res) => {
+    
+    teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+    no = 0
+    for (let i of res) {
+      no += 1
+      teks += `\n• ${no.toString()} •\n`
+      teks += `Berita: ${i.berita}\n`
+      teks += `Jenis: ${i.berita_jenis}\n`
+      teks += `Upload: ${i.berita_diupload}\n`
+      teks += `Link: ${i.berita_url}\n`
+    }
+    teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+    Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+
+  })
+break
+case "merdeka-news":
+  MerdekaNews().then(async (res) => {
+    
+    teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+    no = 0
+    for (let i of res) {
+      no += 1
+      teks += `\n• ${no.toString()} •\n`
+      teks += `Berita: ${i.berita}\n`
+      teks += `Upload: ${i.berita_diupload}\n`
+      teks += `Link: ${i.berita_url}\n`
+    }
+    teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+    Fara.sendMessage(m.chat, { image : { url : res[0].berita_thumb }, caption: teks }, { quoted : m })
+  })
+break
+
+case "jalantikus-meme":
+  var res = await JalanTikusMeme()
+teks = ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+teks += "\nNgakak?\n"
+teks += `\nSource: ${res}\n`
+teks += ".•♫•♬.•♫••♬•♫•.•♬•♫•.•♫•♬.•♫••♬•♫•.•♬•♫•."
+Fara.sendMessage(m.chat, { image : { url : res }, caption: teks }, { quoted : m })
+break
+case 'react': { Fara.sendMessage(m.chat, reactionMessage)}
 break
 
 case 'persamaankata': case 'sinonim':{
@@ -4109,6 +4397,171 @@ case 'keluar': case 'leave': {
                 delete this.anonymous[room.id]
                 if (command === 'leave') break
             }
+            
+//ISLAM MENU
+case 'kisahnabi':
+if (args.length == 0) return m.reply(`Example: ${prefix + command} Muhammad`)
+query = args.join(" ")
+get_result = await fetchJson(`http://api.lolhuman.xyz/api/kisahnabi/${query}?apikey=${lolkey}`)
+get_result = get_result.result
+ini_txt = `Name : ${get_result.name}\n`
+ini_txt += `Lahir : ${get_result.thn_kelahiran}\n`
+ini_txt += `Umur : ${get_result.age}\n`
+ini_txt += `Tempat : ${get_result.place}\n`
+ini_txt += `Story : \n${get_result.story}`
+m.reply(ini_txt)
+break
+case 'niatsolat':
+case 'niatsholat':
+if (args.length == 0) return m.reply(`Example: ${prefix + command} Subuh`)
+jadwal = args.join(" ")
+get_result = await fetchJson(`https://api.lolhuman.xyz/api/niatsholat/${jadwal}?apikey=${lolkey}`)
+get_result = get_result.result
+ini_txt += `Name : ${get_result.name}\n`
+ini_txt += `Arab : ${get_result.ar}\n`
+ini_txt += `Latin : ${get_result.latin}\n`
+ini_txt += `Arti : ${get_result.id}\n`
+m.reply(ini_txt)
+break
+case 'jadwalsholat':
+case 'jadwalsolat':
+if (args.length == 0) return m.reply(`Example: ${prefix + command} Yogyakarta`)
+daerah = args.join(" ")
+get_result = await fetchJson(`https://api.lolhuman.xyz/api/sholat/${daerah}?apikey=${lolkey}`)
+get_result = get_result.result
+ini_txt = `Wilayah : ${get_result.wilayah}\n`
+ini_txt += `Tanggal : ${get_result.tanggal}\n`
+ini_txt += `Sahur : ${get_result.sahur}\n`
+ini_txt += `Imsak : ${get_result.imsak}\n`
+ini_txt += `Subuh : ${get_result.subuh}\n`
+ini_txt += `Terbit : ${get_result.terbit}\n`
+ini_txt += `Dhuha : ${get_result.dhuha}\n`
+ini_txt += `Dzuhur : ${get_result.dzuhur}\n`
+ini_txt += `Ashar : ${get_result.ashar}\n`
+ini_txt += `Maghrib : ${get_result.maghrib}\n`
+ini_txt += `Isya : ${get_result.isya}`
+m.reply(ini_txt)
+break
+case 'alquran':
+            if (args.length < 1) return reply(`Example: ${prefix + command} 18 or ${prefix + command} 18/10 or ${prefix + command} 18/1-10`)
+            axios
+                .get(`https://api.lolhuman.xyz/api/quran/${args[0]}?apikey=${lolkey}`)
+                .then(({ data }) => {
+                    var ayat = data.result.ayat
+                    var text = `QS. ${data.result.surah} : 1-${ayat.length}\n\n`
+                    for (var x of ayat) {
+                        text += `${x.arab}\n${x.ayat}. ${x.latin}\n${x.indonesia}\n\n`
+                    }
+                    text = text.replace(/<u>/g, '_').replace(/<\/u>/g, '_')
+                    text = text.replace(/<strong>/g, '*').replace(/<\/strong>/g, '*')
+                    m.reply(text)
+                })
+                .catch(console.error)
+            break
+        case 'alquranaudio':
+            if (args.length == 0) return reply(`Example: ${prefix + command} 18 or ${prefix + command} 18/10`)
+            Fara.sendMessage(from, { audio: { url: `https://api.lolhuman.xyz/api/quran/audio/${args[0]}?apikey=${lolkey}` }, mimetype: 'audio/mp4' })
+            break
+        case 'asmaulhusna':
+            axios
+                .get(`https://api.lolhuman.xyz/api/asmaulhusna?apikey=${lolkey}`)
+                .then(({ data }) => {
+                    var text = `No : ${data.result.index}\n`
+                    text += `Latin: ${data.result.latin}\n`
+                    text += `Arab : ${data.result.ar}\n`
+                    text += `Indonesia : ${data.result.id}\n`
+                    text += `English : ${data.result.en}`
+                    m.reply(text)
+                })
+                .catch(console.error)
+            break
+case 'listsurah':
+get_result = await fetchJson(`https://api.lolhuman.xyz/api/quran?apikey=${lolkey}`)
+get_result = get_result.result
+ini_txt = 'List Surah:\n'
+for (var x in get_result) {
+ini_txt += `${x}. ${get_result[x]}\n`
+}
+m.reply(ini_txt)
+break
+case 'iqra': {
+oh = `Example : ${prefix + command} 3\n\nIQRA Yang tersedia : 1,2,3,4,5,6`
+if (!text) throw oh
+m.reply(mess.wait)
+yy = await getBuffer(`https://islamic-api-indonesia.herokuapp.com/api/data/pdf/iqra${text}`)
+Fara.sendMessage(m.chat, {document: yy, mimetype: 'application/pdf', fileName: `iqra${text}.pdf`}, {quoted:m}).catch ((err) => m.reply(oh))
+}
+break
+case 'hadis': case 'hadist': {
+if (!args[0]) throw `Contoh:
+${prefix + command} bukhari 1
+${prefix + command} abu-daud 1
+
+Pilihan Tersedia:
+abu-daud
+1 - 4590
+ahmad
+1 - 26363
+bukhari
+1 - 7008
+darimi
+1 - 3367
+ibu-majah
+1 - 4331
+nasai
+1 - 5662
+malik
+1 - 1594
+muslim
+1 - 5362`
+if (!args[1]) throw `Hadis Yang Ke Berapa?\n\nContoh:\n${prefix + command} muslim 1`
+try {
+let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/json/hadith/${args[0]}`)
+let { number, arab, id } = res.find(v => v.number == args[1])
+m.reply(`No. ${number}
+
+${arab}
+
+${id}`)
+} catch (e) {
+m.reply(`Hadis tidak ditemukan !`)
+}
+}
+break
+case 'juzamma': {
+if (args[0] === 'pdf') {
+m.reply(mess.wait)
+Fara.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pdf'}, mimetype: 'application/pdf', fileName: 'juz-amma-arab-latin-indonesia.pdf'}, {quoted:fakeFara})
+} else if (args[0] === 'docx') {
+m.reply(mess.wait)
+Fara.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.docx'}, mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', fileName: 'juz-amma-arab-latin-indonesia.docx'}, {quoted:m})
+} else if (args[0] === 'pptx') {
+m.reply(mess.wait)
+Fara.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pptx'}, mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', fileName: 'juz-amma-arab-latin-indonesia.pptx'}, {quoted:m})
+} else if (args[0] === 'xlsx') {
+m.reply(mess.wait)
+Fara.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx'}, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileName: 'juz-amma-arab-latin-indonesia.xlsx'}, {quoted:m})
+} else {
+m.reply(`Mau Format Apa ? Example : ${prefix + command} pdf
+
+Format Yang Tersedia : pdf, docx, pptx, xlsx`)
+}
+}
+break
+case 'tafsirsurah': {
+if (!args[0]) return m.reply(`Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`)
+if (!args[1]) return m.reply(`Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`)
+let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/quran?surah=${args[0]}&ayat=${args[1]}`)
+let txt = `ã€Œ *Tafsir Surah* ã€
+
+*Pendek* : ${res.result.data.tafsir.id.short}
+
+*Panjang* : ${res.result.data.tafsir.id.long}
+
+( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
+m.reply(txt)
+}
+break
 //━━━━━━━━━━━━━━━[ AKHIR FITUR ]━━━━━━━━━━━━━━━━━//
 
 default:
