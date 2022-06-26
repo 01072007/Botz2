@@ -5,6 +5,14 @@
       {
         "menu": "grab",
         "harga": " 35k"
+      },
+      {
+        "menu": "gambar",
+        "harga": "stil"
+      },
+      {
+        "menu": "Rr",
+        "harga": "Anjay"
       }
     ],
     "sections": [
@@ -14,6 +22,14 @@
           {
             "title": "grab",
             "rowId": "grab"
+          },
+          {
+            "title": "gambar",
+            "rowId": "gambar"
+          },
+          {
+            "title": "Rr",
+            "rowId": "Rr"
           }
         ]
       }

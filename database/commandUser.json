@@ -497,7 +497,7 @@
     "db": [
       {
         "nama": "#menu",
-        "count": 161
+        "count": 184
       },
       {
         "nama": "#dashboard",
@@ -549,7 +549,7 @@
       },
       {
         "nama": "#infobot",
-        "count": 2
+        "count": 19
       },
       {
         "nama": "#githubstalk",
@@ -561,7 +561,7 @@
       },
       {
         "nama": "#listpremium",
-        "count": 1
+        "count": 14
       },
       {
         "nama": "#menusticker",
@@ -602,6 +602,26 @@
       {
         "nama": "#setdone",
         "count": 1
+      },
+      {
+        "nama": "#addprem",
+        "count": 6
+      },
+      {
+        "nama": "#delprem",
+        "count": 3
+      },
+      {
+        "nama": "#ytmp3",
+        "count": 1
+      },
+      {
+        "nama": "#twitter",
+        "count": 5
+      },
+      {
+        "nama": "#twddl",
+        "count": 2
       }
     ]
   },
@@ -614,7 +634,7 @@
       },
       {
         "nama": "#menu",
-        "count": 29
+        "count": 43
       },
       {
         "nama": "#grupwa",
@@ -659,11 +679,15 @@
       },
       {
         "nama": "#tiktok",
-        "count": 4
+        "count": 5
       },
       {
         "nama": "#menu",
-        "count": 2
+        "count": 3
+      },
+      {
+        "nama": "#dashboard",
+        "count": 1
       }
     ]
   },
@@ -672,11 +696,15 @@
     "db": [
       {
         "nama": "#menu",
-        "count": 6
+        "count": 7
       },
       {
         "nama": "#igstalk",
         "count": 4
+      },
+      {
+        "nama": "#sewabot",
+        "count": 2
       }
     ]
   },
@@ -715,11 +743,19 @@
     "db": [
       {
         "nama": "#menu",
-        "count": 6
+        "count": 9
       },
       {
         "nama": "#help",
         "count": 1
+      },
+      {
+        "nama": "#tiktok",
+        "count": 1
+      },
+      {
+        "nama": "#${command}",
+        "count": 2
       }
     ]
   },
@@ -842,6 +878,14 @@
     "db": [
       {
         "nama": "#menu",
+        "count": 5
+      },
+      {
+        "nama": "#ytmp3",
+        "count": 5
+      },
+      {
+        "nama": "#tiktok",
         "count": 1
       }
     ]
@@ -978,6 +1022,295 @@
   },
   {
     "jid": "6281370621023@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#dashboard",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6287731367122@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "jid": "6281311777698@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#dashboard",
+        "count": 1
+      },
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6289604111770@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#dashboard",
+        "count": 1
+      },
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6282125443354@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#pinterest",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "94720814756@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "jid": "62895366943070@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6281283904690@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "13178278553@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 2
+      },
+      {
+        "nama": "#delprem",
+        "count": 2
+      },
+      {
+        "nama": "#listpremium",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6281214266631@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#ytmp4",
+        "count": 3
+      }
+    ]
+  },
+  {
+    "jid": "6281215750574@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#dashboard",
+        "count": 1
+      },
+      {
+        "nama": "#gimage",
+        "count": 2
+      },
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "628816422009@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#ytmp3",
+        "count": 1
+      },
+      {
+        "nama": "#menu",
+        "count": 4
+      },
+      {
+        "nama": "#ytmp4",
+        "count": 6
+      },
+      {
+        "nama": "#${command}",
+        "count": 1
+      },
+      {
+        "nama": "#play",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6289654368712@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 6
+      },
+      {
+        "nama": "#play",
+        "count": 3
+      }
+    ]
+  },
+  {
+    "jid": "60134925116@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 4
+      },
+      {
+        "nama": "#dashboard",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "62895402228569@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#tiktok",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6287870855343@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 10
+      },
+      {
+        "nama": "#play",
+        "count": 2
+      },
+      {
+        "nama": "#listpremium",
+        "count": 1
+      },
+      {
+        "nama": "#sewabot",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6283820026171@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#${command}",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "jid": "18622412355@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6289518269843@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#tiktok",
+        "count": 3
+      }
+    ]
+  },
+  {
+    "jid": "6285791677204@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "601131501985@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6282350496532@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6285600380823@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "923017685854@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 2
+      },
+      {
+        "nama": "#dashboard",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6283112210174@s.whatsapp.net",
+    "db": [
+      {
+        "nama": "#menu",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "jid": "6281268378313@s.whatsapp.net",
     "db": [
       {
         "nama": "#dashboard",
