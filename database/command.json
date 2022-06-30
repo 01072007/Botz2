@@ -1,11 +1,11 @@
 [
   {
     "nama": "#menu",
-    "count": 937
+    "count": 1016
   },
   {
     "nama": "#sewabot",
-    "count": 322
+    "count": 325
   },
   {
     "nama": "#sticker",
@@ -13,50 +13,58 @@
   },
   {
     "nama": "#dashboard",
-    "count": 44
-  },
-  {
-    "nama": "#donate",
-    "count": 24
-  },
-  {
-    "nama": "#tiktok",
-    "count": 27
-  },
-  {
-    "nama": "#listpremium",
-    "count": 20
+    "count": 46
   },
   {
     "nama": "#infobot",
     "count": 36
   },
   {
+    "nama": "#tiktok",
+    "count": 47
+  },
+  {
+    "nama": "#donate",
+    "count": 24
+  },
+  {
+    "nama": "#listpremium",
+    "count": 21
+  },
+  {
+    "nama": "#play",
+    "count": 36
+  },
+  {
+    "nama": "#ytmp3",
+    "count": 26
+  },
+  {
+    "nama": "#ytmp4",
+    "count": 20
+  },
+  {
     "nama": "#emojimix",
     "count": 15
   },
   {
-    "nama": "#owner",
-    "count": 13
+    "nama": "#${command}",
+    "count": 25
   },
   {
     "nama": "#listsewa",
     "count": 13
   },
   {
-    "nama": "#ytmp3",
-    "count": 10
+    "nama": "#owner",
+    "count": 13
   },
   {
     "nama": "#addprem",
     "count": 8
   },
   {
-    "nama": "#pinterest",
-    "count": 7
-  },
-  {
-    "nama": "#igstalk",
+    "nama": "#changeproses",
     "count": 7
   },
   {
@@ -64,31 +72,19 @@
     "count": 7
   },
   {
-    "nama": "#changeproses",
-    "count": 7
+    "nama": "#igstalk",
+    "count": 11
   },
   {
-    "nama": "#play",
-    "count": 13
+    "nama": "#pinterest",
+    "count": 9
   },
   {
     "nama": "#pinterestdl",
     "count": 6
   },
   {
-    "nama": "#delprem",
-    "count": 5
-  },
-  {
-    "nama": "#ytmp4",
-    "count": 11
-  },
-  {
-    "nama": "#${command}",
-    "count": 12
-  },
-  {
-    "nama": "#hidetag",
+    "nama": "#twitter",
     "count": 5
   },
   {
@@ -96,15 +92,15 @@
     "count": 5
   },
   {
-    "nama": "#lirik",
-    "count": 4
+    "nama": "#hidetag",
+    "count": 5
   },
   {
-    "nama": "#attp",
-    "count": 4
+    "nama": "#delprem",
+    "count": 5
   },
   {
-    "nama": "#tiktoknowm",
+    "nama": "#setppbot",
     "count": 4
   },
   {
@@ -112,19 +108,19 @@
     "count": 4
   },
   {
-    "nama": "#setppbot",
+    "nama": "#tiktoknowm",
     "count": 4
   },
   {
-    "nama": "#mlstalk",
-    "count": 3
+    "nama": "#attp",
+    "count": 4
   },
   {
-    "nama": "#translate",
-    "count": 3
+    "nama": "#lirik",
+    "count": 4
   },
   {
-    "nama": "#delsetproses",
+    "nama": "#sewa",
     "count": 3
   },
   {
@@ -132,55 +128,19 @@
     "count": 3
   },
   {
-    "nama": "#sewa",
+    "nama": "#delsetproses",
     "count": 3
   },
   {
-    "nama": "#google",
-    "count": 2
+    "nama": "#translate",
+    "count": 4
   },
   {
-    "nama": "#tiktokstalk",
-    "count": 2
+    "nama": "#mlstalk",
+    "count": 3
   },
   {
-    "nama": "#githubstalk",
-    "count": 2
-  },
-  {
-    "nama": "#setdone",
-    "count": 2
-  },
-  {
-    "nama": "#ytsearch",
-    "count": 2
-  },
-  {
-    "nama": "#stop",
-    "count": 2
-  },
-  {
-    "nama": "#setwelcome",
-    "count": 2
-  },
-  {
-    "nama": "#public",
-    "count": 2
-  },
-  {
-    "nama": "#addsewa",
-    "count": 2
-  },
-  {
-    "nama": "#couple",
-    "count": 2
-  },
-  {
-    "nama": "#waifu",
-    "count": 2
-  },
-  {
-    "nama": "#join",
+    "nama": "#twddl",
     "count": 2
   },
   {
@@ -188,103 +148,55 @@
     "count": 2
   },
   {
-    "nama": "#supersusstalk",
-    "count": 1
+    "nama": "#join",
+    "count": 2
   },
   {
-    "nama": "#nickdomino",
-    "count": 1
+    "nama": "#waifu",
+    "count": 2
   },
   {
-    "nama": "#delete",
-    "count": 1
+    "nama": "#couple",
+    "count": 2
   },
   {
-    "nama": "#welcome",
-    "count": 1
+    "nama": "#addsewa",
+    "count": 2
   },
   {
-    "nama": "#family100",
-    "count": 1
+    "nama": "#public",
+    "count": 2
   },
   {
-    "nama": "#nuliskanan",
-    "count": 1
+    "nama": "#setwelcome",
+    "count": 2
   },
   {
-    "nama": "#nulis",
-    "count": 1
+    "nama": "#stop",
+    "count": 2
   },
   {
-    "nama": "#start",
-    "count": 1
+    "nama": "#ytsearch",
+    "count": 2
   },
   {
-    "nama": "#cogan",
-    "count": 1
+    "nama": "#setdone",
+    "count": 2
   },
   {
-    "nama": "#cekdrive",
-    "count": 1
+    "nama": "#githubstalk",
+    "count": 2
   },
   {
-    "nama": "#setppgrup",
-    "count": 1
+    "nama": "#tiktokstalk",
+    "count": 2
   },
   {
-    "nama": "#pornhub",
-    "count": 1
+    "nama": "#google",
+    "count": 2
   },
   {
-    "nama": "#antilink",
-    "count": 1
-  },
-  {
-    "nama": "#casino",
-    "count": 1
-  },
-  {
-    "nama": "#meme",
-    "count": 1
-  },
-  {
-    "nama": "#limit",
-    "count": 1
-  },
-  {
-    "nama": "#tebaklagu",
-    "count": 1
-  },
-  {
-    "nama": "#toimg",
-    "count": 1
-  },
-  {
-    "nama": "#joker",
-    "count": 1
-  },
-  {
-    "nama": "#tomp3",
-    "count": 1
-  },
-  {
-    "nama": "#grupwa",
-    "count": 1
-  },
-  {
-    "nama": "#menusticker",
-    "count": 1
-  },
-  {
-    "nama": "#broadcast",
-    "count": 1
-  },
-  {
-    "nama": "#bcsewa",
-    "count": 1
-  },
-  {
-    "nama": "#cowner",
+    "nama": "#tiktokaudio",
     "count": 1
   },
   {
@@ -292,15 +204,103 @@
     "count": 1
   },
   {
-    "nama": "#tiktokaudio",
+    "nama": "#cowner",
     "count": 1
   },
   {
-    "nama": "#twitter",
-    "count": 5
+    "nama": "#bcsewa",
+    "count": 1
   },
   {
-    "nama": "#twddl",
-    "count": 2
+    "nama": "#broadcast",
+    "count": 1
+  },
+  {
+    "nama": "#menusticker",
+    "count": 1
+  },
+  {
+    "nama": "#grupwa",
+    "count": 1
+  },
+  {
+    "nama": "#tomp3",
+    "count": 1
+  },
+  {
+    "nama": "#joker",
+    "count": 1
+  },
+  {
+    "nama": "#toimg",
+    "count": 1
+  },
+  {
+    "nama": "#tebaklagu",
+    "count": 1
+  },
+  {
+    "nama": "#limit",
+    "count": 1
+  },
+  {
+    "nama": "#meme",
+    "count": 1
+  },
+  {
+    "nama": "#casino",
+    "count": 1
+  },
+  {
+    "nama": "#antilink",
+    "count": 1
+  },
+  {
+    "nama": "#pornhub",
+    "count": 1
+  },
+  {
+    "nama": "#setppgrup",
+    "count": 1
+  },
+  {
+    "nama": "#cekdrive",
+    "count": 1
+  },
+  {
+    "nama": "#cogan",
+    "count": 1
+  },
+  {
+    "nama": "#start",
+    "count": 1
+  },
+  {
+    "nama": "#nulis",
+    "count": 1
+  },
+  {
+    "nama": "#nuliskanan",
+    "count": 1
+  },
+  {
+    "nama": "#family100",
+    "count": 1
+  },
+  {
+    "nama": "#welcome",
+    "count": 1
+  },
+  {
+    "nama": "#delete",
+    "count": 1
+  },
+  {
+    "nama": "#nickdomino",
+    "count": 1
+  },
+  {
+    "nama": "#supersusstalk",
+    "count": 1
   }
 ]

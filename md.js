@@ -9,6 +9,7 @@ const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
 const PhoneNumber = require('awesome-phonenumber')
+const { groupResponse } = require('./response/group.js')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./message/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./message/myfunc')
 
@@ -109,36 +110,10 @@ Fara.send5ButImg(pea[0].id, `「 Group Settings Change 」\n\nGroup Subject tela
 }
 })
 
-Fara.ev.on('group-participants.update', async (anu) => {
-console.log(anu)
-try {
-let metadata = await Fara.groupMetadata(anu.id)
-let participants = anu.participants
-for (let num of participants) {
-// Get Profile Picture User
-try {
-ppuser = await Fara.profilePictureUrl(num, 'image')
-} catch {
-ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
-}
-
-// Get Profile Picture Group
-try {
-ppgroup = await Fara.profilePictureUrl(anu.id, 'image')
-} catch {
-ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
-}
-
-if (anu.action == 'add') {
-Fara.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
-} else if (anu.action == 'remove') {
-Fara.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
-}
-}
-} catch (err) {
-console.log(err)
-}
-})
+Fara.ev.on('group-participants.update', async (update) =>{
+   groupResponse(Fara, update)
+   console.log(update)
+   })         
 	
 // Setting
 Fara.decodeJid = (jid) => {
@@ -173,7 +148,29 @@ Fara.user :
 (store.contacts[id] || {})
 return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
 }
-    
+
+Fara.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
+      let mime = '';
+      let res = await axios.head(url)
+      mime = res.headers['content-type']
+      if (mime.split("/")[1] === "gif") {
+     return Fara.sendMessage(jid, { video: await getBuffer(url), caption: caption, gifPlayback: true, ...options}, { quoted: quoted, ...options})
+      }
+      let type = mime.split("/")[0]+"Message"
+      if(mime === "application/pdf"){
+     return Fara.sendMessage(jid, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, ...options}, { quoted: quoted, ...options })
+      }
+      if(mime.split("/")[0] === "image"){
+     return Fara.sendMessage(jid, { image: await getBuffer(url), caption: caption, ...options}, { quoted: quoted, ...options})
+      }
+      if(mime.split("/")[0] === "video"){
+     return Fara.sendMessage(jid, { video: await getBuffer(url), caption: caption, mimetype: 'video/mp4', ...options}, { quoted: quoted, ...options })
+      }
+      if(mime.split("/")[0] === "audio"){
+     return Fara.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options}, { quoted: quoted, ...options })
+      }
+      }
+
 Fara.sendContact = async (jid, kon, quoted = '', opts = {}) => {
 let list = []
 for (let i of kon) {

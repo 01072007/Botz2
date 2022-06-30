@@ -1,43 +1,16 @@
-/* My Info
-* New Base Multi Device By Zero YT7
-* Please Follow Me On All Sosial Media
-* Instagram : https://instagram.com/Zero_YT7
-* Tiktok : https://tiktok.com/@_zeroyt7
-* Github : https://github.com/Zero-YT7
-* Youtube : https://youtube.com/ZeroYT7
-* Contact Me on wa.me/6285157740529
-*/
-
-/* My Web
-* Rest Api : https://zeroyt7-api.xyz
-* Olshop : https://zeroyt7.xyz
-*/
-
-/* Thanks To
-* Zero TT7
-* Dhika Ardiant
-* Mhankbarbar
-* Chaliph
-* Allah S.W.T
-* Ortu
-* All Creator Bot
-* All Subscriber Ku
-*/
-
 const fs = require('fs')
 const chalk = require('chalk')
 
 //━━━━━━━━━━━━━━━[ WEBSITE APIKEY ]━━━━━━━━━━━━━━━━━//
 
 global.APIs = {
-ZeroYT7: 'https://api-lolhuman.xyz',
+zenz: 'https://zenzapis.xyz',
 }
-
-//━━━━━━━━━━━━━━━[ APIKEY ]━━━━━━━━━━━━━━━━━//
 
 global.APIKeys = {
-'https://api-lolhuman.xyz': 'RINTISTOD',
-}
+	'https://zenzapis.xyz': 'rintiscc',
+	}
+//━━━━━━━━━━━━━━━[ APIKEY ]━━━━━━━━━━━━━━━━━//
 
 //━━━━━━━━━━━━━━━[ SETTING ]━━━━━━━━━━━━━━━━━//
 
@@ -51,6 +24,28 @@ global.email = 'rintisid@gmail.com'
 global.author = 'Faraa'
 global.prefa = ['','!','.','🐦','🐤','🗿']
 global.sp = '⭔'
+
+//database
+global.ntilinkytvid = []
+global.ntilinkytch = []
+global.ntilinkig = []
+global.ntilinkfb = []
+global.ntilinktg = []
+global.ntilinktt = []
+global.ntilinktwt = []
+global.ntilinkall = []
+global.nticall = []
+global.ntwame = []
+global.nttoxic = []
+global.ntnsfw = []
+global.ntvirtex = []
+global.rkyt = []
+global.wlcm = []
+global.gcrevoke = []
+global.autorep = []
+global.ntilink = []
+
+//Mess
 global.mess = {
 success: '✓ Success',
 admin: 'Fitur Khusus Admin Group!',

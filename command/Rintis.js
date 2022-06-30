@@ -11,6 +11,7 @@ var os = require('os')
 var jimp = require('jimp')
 var ra = require('ra-api')
 var mathjs = require('mathjs')
+var ig = require('insta-fetcher')
 var hikki = require('hikki-me') 
 var xfarr = require('xfarr-api')
 var yts = require('yt-search')
@@ -81,6 +82,7 @@ const { cerpen } = require('../lib/cerpen')
 const _sewa = require('../lib/sewa')
 const { TiktokDownloader } = require('../lib/tiktokdl') 
 const { TelegraPh } = require ('../lib/uploader')
+const { hentai } = require('../lib/scraper2.js')
 const { mediafireDl, igstalk } = require('../lib/function')
 const { wikiSearch } = require('../scrape/wiki.js');
 const { Gempa } = require("../scrape/gempa.js");
@@ -92,15 +94,18 @@ var thumbnail = fs.readFileSync('./image/thumbnail.jpg')
 
 let db_respon_list = JSON.parse(fs.readFileSync('./database/list.json'));
 let { addResponList, delResponList, isAlreadyResponList, isAlreadyResponListGroup, sendResponList, updateResponList, getDataResponList } = require('../lib/respon-list.js')
-const _prem = require("../lib/premium");
+var _prem = require("../lib/premium");
 
 //━━━━━━━━━━━━━━━[ DATABASE ]━━━━━━━━━━━━━━━━━//
-const pendaftar = JSON.parse(fs.readFileSync('./database/user.json'))
-const _cmd = JSON.parse(fs.readFileSync('./database/command.json'));
-const _cmdUser = JSON.parse(fs.readFileSync('./database/commandUser.json'));
-const limit = JSON.parse(fs.readFileSync('./database/limit.json'))
-const sewa = JSON.parse(fs.readFileSync('./database/sewa.json'))
+var pendaftar = JSON.parse(fs.readFileSync('./database/user.json'))
+var _cmd = JSON.parse(fs.readFileSync('./database/command.json'));
+var _cmdUser = JSON.parse(fs.readFileSync('./database/commandUser.json'));
+var limit = JSON.parse(fs.readFileSync('./database/limit.json'))
+var sewa = JSON.parse(fs.readFileSync('./database/sewa.json'))
 let listStore = JSON.parse(fs.readFileSync('./database/list.json'));
+let autosticker = JSON.parse(fs.readFileSync('./database/autosticker.json'))
+let _autostick = JSON.parse(fs.readFileSync('./database/autostickpc.json'))
+let bad = JSON.parse(fs.readFileSync('./database/bad.json'));
 
 var tebaklagu = db.data.game.tebaklagu = []
 var _family100 = db.data.game.family100 = []
@@ -126,6 +131,7 @@ var sender = m.isGroup ? m.participant : m.key.remoteJid
 var from = m.key.remoteJid
 var command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
 var args = body.trim().split(/ +/).slice(1)
+var messagesD = body.slice(0).trim().split(/ +/).shift().toLowerCase()
 var pushname = m.pushName || "No Name"
 var botNumber = await Fara.decodeJid(Fara.user.id)
 var isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
@@ -143,7 +149,22 @@ var isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
 var isAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
 var isUser = pendaftar.includes(sender)
 var isSewa = _sewa.checkSewaGroup(from, sewa)
+const AntiLinkYoutubeVid = m.isGroup ? ntilinkytvid.includes(from) : false
+const AntiLinkYoutubeChannel = m.isGroup ? ntilinkytch.includes(from) : false
+const AntiLinkInstagram = m.isGroup ? ntilinkig.includes(from) : false
+const AntiLinkFacebook = m.isGroup ? ntilinkfb.includes(from) : false
+const AntiLinkTiktok = m.isGroup ? ntilinktt.includes(from) : false
+const AntiLinkTelegram = m.isGroup ? ntilinktg.includes(from) : false
+const AntiLinkTwitter = m.isGroup ? ntilinktwt.includes(from) : false
+const AntiLinkAll = m.isGroup ? ntilinkall.includes(from) : false
+const antiWame = m.isGroup ? ntwame.includes(from) : false
+const antiToxic = m.isGroup ? nttoxic.includes(from) : false
+const antiVirtex = m.isGroup ? ntvirtex.includes(from) : false
+const AntiNsfw = m.isGroup ? ntnsfw.includes(from) : false
+const isAutoStick = _autostick.includes(from)
+const isAutoSticker = m.isGroup ? autosticker.includes(from) : false
 var isPremium = isCreator ? true : _prem.checkPremiumUser(sender, premium)
+autoreadsw = true
 //━━━━━━━━━━━━━━━[ FUNCTION ]━━━━━━━━━━━━━━━━━//
 
 try {
@@ -190,6 +211,12 @@ console.error(err)
 	    //Expired Sewa
 _sewa.expiredCheck(Fara, sewa)
 
+//auto read whatsapp status
+if (autoreadsw) {
+		if (from === 'status@broadcast') {
+		Fara.chatRead(from)
+	}
+	}
 // Push Message To Console && Auto Read
         if (command) {
 await Fara.sendPresenceUpdate('composing', m.chat)
@@ -289,13 +316,254 @@ if (isCreator) return m.reply(`Ehh maaf kamu owner bot ku`)
 Fara.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
 }
 }
-        
+
+// Antiwame by xeon
+  if (antiWame)
+  if (budy.includes(`wa.me`)) {
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Wa.me Link Detected 」\`\`\`\n\nAdmin has sent a wa.me link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Wa.me Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending youtube video link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+  if (antiWame)
+  if (budy.includes(`http://wa.me`)) {
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Wa.me Link Detected 」\`\`\`\n\nAdmin has sent a wa.me link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Wa.me Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending youtube video link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antivirtex by xeon
+  if (antiVirtex) {
+  if (budy.length > 3500) {
+  reply(`Somebody spammed virus!! Mark as read⚠️\n`.repeat(300))
+  reply(`\`\`\`「 Virus Detected 」\`\`\`\n\nSorry You Will Be Kicked !`)
+  if (!isBotAdmins) return reply(mess.botAdmin)
+  Fara.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
+  }
+  }
+//anti bad words by xeon
+if (antiToxic)
+if (budy.includes("njing")) 
+if (budy.includes("anjg")) 
+if (budy.includes("ajg")) 
+if (budy.includes("anj")) 
+if (budy.includes("bangsat")) 
+if (budy.includes("bngsd")) 
+if (budy.includes("tod")) 
+if (budy.includes("asw")) 
+if (budy.includes("bajingan")) 
+if (budy.includes("kunyuk")) 
+if (budy.includes("kntol")) 
+if (budy.includes("kontol")) 
+if (budy.includes("kntl")) 
+if (budy.includes("kontl")) 
+if (budy.includes("blok")) 
+if (budy.includes("memek")) 
+if (budy.includes("mmk")) 
+if (budy.includes("memk")) 
+if (budy.includes("mmek")) 
+if (budy.includes("gentod")) 
+if (budy.includes("gentot")) 
+if (budy.includes("ento")) 
+if (budy.includes("jablay")) 
+if (budy.includes("banci")) 
+if (budy.includes("pencong")) 
+if (budy.includes("pecun")) 
+if (budy.includes("perek")) 
+if (budy.includes("ytem")) 
+if (budy.includes("yatim")) 
+if (budy.includes("brengsek")) 
+if (budy.includes("bejad")) 
+if (budy.includes("keparat")) 
+if (budy.includes("setan")) 
+if (budy.includes("budek")) 
+if (budy.includes("sarap")) 
+if (budy.includes("tolol")) 
+if (budy.includes("lol")) 
+if (budy.includes("sinting")) 
+if (budy.includes("geblek")) 
+if (budy.includes("idiot")) 
+if (budy.includes("goblok")) 
+if (budy.includes("blok")) 
+if (budy.includes("gblok")) 
+if (budy.includes("gblk")) 
+if (budy.includes("bgo")) 
+if (budy.includes("bego")) 
+if (budy.includes("meki")) 
+if (budy.includes("telaso")) {
+tos = ['Hey, watch your mouth','Never been taught how to speak?','Stop being toxic my friend🤢','Dont be toxic🦄']
+sin =  tos[Math.floor(Math.random() * (tos.length))]
+reply(sin)
+if (m.text) {
+bvl = `\`\`\`「 Bad Word Detected 」\`\`\`\n\nYou are using bad word but you are an admin that's why i won't kick you😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Bad Word Detected 」\`\`\`\n\n@${kice.split("@")[0]} was kicked because of using bad words in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})}
+}
+
+//antilink youtube video by xeon
+if (AntiLinkYoutubeVid)
+if (budy.includes("https://youtu.be/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 YoutTube Video Link Detected 」\`\`\`\n\nAdmin has sent a youtube video link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 YouTube Video Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending youtube video link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink youtube channel by xeon
+if (AntiLinkYoutubeChannel)
+   if (budy.includes("https://youtube.com/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 YoutTube Channel Link Detected 」\`\`\`\n\nAdmin has sent a youtube channel link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 YouTube Channel Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending youtube channel link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink instagram by xeon
+if (AntiLinkInstagram)
+   if (budy.includes("https://www.instagram.com/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Instagram Link Detected 」\`\`\`\n\nAdmin has sent a instagram link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Instagram Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending instagram link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink facebook by xeon
+if (AntiLinkFacebook)
+   if (budy.includes("https://facebook.com/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Facebook Link Detected 」\`\`\`\n\nAdmin has sent a facebook link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Facebook Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending facebook link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink telegram by xeon
+if (AntiLinkTelegram)
+   if (budy.includes("https://t.me/")){
+if (AntiLinkTelegram)
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Telegram Link Detected 」\`\`\`\n\nAdmin has sent a telegram link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Telegram Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending telegram link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink tiktok by xeon
+if (AntiLinkTiktok)
+   if (budy.includes("https://www.tiktok.com/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Tiktok Link Detected 」\`\`\`\n\nAdmin has sent a tiktok link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Tiktok Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending tiktok link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink twitter by xeon
+if (AntiLinkTwitter)
+   if (budy.includes("https://twitter.com/")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Twitter Link Detected 」\`\`\`\n\nAdmin has sent a twitter link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Tiktok Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending twitter link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
+//antilink all by xeon
+if (AntiLinkAll)
+   if (budy.includes("https://")){
+if (!isBotAdmins) return
+bvl = `\`\`\`「 Link Detected 」\`\`\`\n\nAdmin has sent a link, admin is free to send any link😇`
+if (isAdmins) return reply(bvl)
+if (m.key.fromMe) return reply(bvl)
+if (isCreator) return reply(bvl)
+kice = m.sender
+await Fara.groupParticipantsUpdate(m.chat, [kice], 'remove')
+Fara.sendMessage(from, {text:`\`\`\`「 Link Detected 」\`\`\`\n\n@${kice.split("@")[0]} Has been kicked because of sending link in this group`, contextInfo:{mentionedJid:[kice]}}, {quoted:m})
+} else {
+}
 //━━━━━━━━━━━━━━━[ MUTE ]━━━━━━━━━━━━━━━━━//
 
 if (db.data.chats[m.chat].mute && !isAdmins && !isCreator) {
 return
 }
 
+//━━━━━━━━━━━━━━━[ ALL CHT ]━━━━━━━━━━━━━━━━━//
+//anti viewonce by xeon
+if (m.mtype == 'viewOnceMessage') {
+	if (!db.data.chats[m.chat].antionce) return
+ teks = `「 *Anti ViewOnce Message* 」
+❖ Name : ${m.pushName}
+❖ User : @${m.sender.split("@")[0]}
+❖ Clock : ${moment.tz('Asia/Jakarta').format('HH:mm:ss')} 
+❖ Date : ${moment.tz('Asia/Jakarta').format('DD/MM/YYYY')}
+❖ MessageType : ${m.mtype}`
+Fara.sendTextWithMentions(m.chat, teks, m)
+await sleep(500)
+m.copyNForward(m.chat, true, { readViewOnce: true }).catch(_ => reply(`Maybe it's been opened by a bot`))
+}
+
+// Autosticker gc
+        if (isAutoSticker) {
+            if (/image/.test(mime) && !/webp/.test(mime)) {
+                let mediac = await quoted.download()
+                await Fara.sendImageAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
+                console.log(`Auto sticker detected`)
+            } else if (/video/.test(mime)) {
+                if ((quoted.msg || quoted).seconds > 11) return
+                let mediac = await quoted.download()
+                await Fara.sendVideoAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
+            }
+        }
+        //Autosticker pc
+                if (isAutoStick) {
+            if (/image/.test(mime) && !/webp/.test(mime)) {
+                let mediac = await quoted.download()
+                await Fara.sendImageAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
+                console.log(`Auto sticker detected`)
+            } else if (/video/.test(mime)) {
+                if ((quoted.msg || quoted).seconds > 11) return
+                let mediac = await quoted.download()
+                await Fara.sendVideoAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
+            }
+        }
 //━━━━━━━━━━━━━━━[ FAKE ]━━━━━━━━━━━━━━━━━//
 
 const ftroli ={key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "6289523258649-1604595598@g.us"}, "message": {orderMessage: {itemCount: 2021,status: 200, thumbnail: thumbnail, surface: 200, message: `© Rintis ID`, orderTitle: 'Please Follow Instagtam @rintiswpameling', sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":true},sendEphemeral: true}
@@ -681,6 +949,15 @@ async function addCountCmd(nama, sender, _db) {
             }
         }
 
+const hariRaya = new Date('1 7, 2023 00:00:00')
+			const sekarang = new Date().getTime();
+			const Selisih = hariRaya - sekarang;
+			const jhari = Math.floor( Selisih / (1000 * 60 * 60 * 24));
+			const jjam = Math.floor( Selisih % (1000 * 60 * 60 * 24) / (1000 * 60 * 60))
+			const mmmenit = Math.floor( Selisih % (1000 * 60 * 60) / (1000 * 60));
+			const ddetik = Math.floor( Selisih % (1000 * 60) / 1000);
+			const ultah = `${jhari}Day ${jjam}Hour ${mmmenit}Minute ${ddetik}Second`
+			
 function hitungmundur(bulan, tanggal) {
           let from = new Date(`${bulan} ${tanggal}, 2022 00:00:00`).getTime();
           let now = Date.now();
@@ -696,6 +973,14 @@ function hitungmundur(bulan, tanggal) {
         if (sender.startsWith('212')) {
             return Fara.updateBlockStatus(sender, 'block')
         }
+        
+global.hit = {}
+if (isCmd) {
+data = await fetchJson('https://api.countapi.xyz/hit/CheemsBot/visits')
+jumlahcmd = `${data.value}`
+dataa = await fetchJson(`https://api.countapi.xyz/hit/CheemsBot${moment.tz('Asia/Kolkata').format('DDMMYYYY')}/visits`)
+jumlahharian = `${dataa.value}`
+}
 
 const generateProfilePicture = async(buffer) => {
 const jimp_1 = await jimp.read(buffer);
@@ -747,7 +1032,7 @@ let latensi = speed() - timestamp
 let template = await generateWAMessageFromContent(m.chat, proto.Message.fromObject({
 listMessage :{
 title: `Hi ${pushname}`,
-description: `*HITUNG MUNDUR IDUL ADHA*\n${mundur}\n\n_*INFO USER*_\n*Nama* : ${pushname}\n*Link* : wa.me/${sender.split('@')[0]}\n*Limit* : ${isCreator ? 'Infinity' : isPremium ? 'Unlimited' : getLimit(sender, limitawal.free, limit)}\n\n_*INFO BOT*_\n*Owner* : ${isCreator ? 'Yes' : 'No'}\n*WIB* : ${jam}\n*WITA* : ${wita}\n*WIT* : ${wit}\n*Runtime* : ${runtime(process.uptime())}\n*Speed* : ${latensi.toFixed(4)}\n*Libray* : Baileys Multi-Device\n*User* : ${pendaftar.length}`,
+description: `*HITUNG MUNDUR IDUL ADHA*\n${mundur}\n\n_*INFO USER*_\n*Nama* : ${pushname}\n*Link* : wa.me/${sender.split('@')[0]}\n*Limit* : ${isCreator ? 'Infinity' : isPremium ? 'Unlimited' : getLimit(sender, limitawal.free, limit)}\n\n_*INFO BOT*_\n*Owner* : ${isCreator ? 'Yes' : 'No'}\n*Hit Harian* : ${jumlahharian}\n*WIB* : ${jam}\n*WITA* : ${wita}\n*WIT* : ${wit}\n*Runtime* : ${runtime(process.uptime())}\n*Speed* : ${latensi.toFixed(4)}\n*Libray* : Baileys Multi-Device\n*User* : ${pendaftar.length}`,
 buttonText: "Click Here",
 footerText: `XynosBOT - MD`,
 listType: "SINGLE_SELECT",
@@ -777,6 +1062,11 @@ sections: [{
                                                                             "title": "Converter Fitur",
                                                                             "description": "Menampilkan Converter Fitur",
                                                                             "rowId": `${prefix}menuconvert`
+                                                                        },
+                                                                        {
+                                                                        	"title": "Sistem Fitur",
+                                                                            "description": "Menampilkan Fitur Sistem",
+                                                                            "rowId": `${prefix}sistemmenu`
                                                                         },
                                                                         {
                                                                         	"title": "Sticker Fitur",
@@ -1008,6 +1298,8 @@ menuwh =`*OTHER MENU*
 • ${prefix}runtime
 • ${prefix}hapus *reply cht*
 • ${prefix}ssweb
+• ${prefix}autosticker
+• ${prefix}autostickerpc
 • ${prefix}ringtone
 • ${prefix}shortlink
 • ${prefix}kalkulator
@@ -1630,6 +1922,23 @@ menuwh =`*RANDOM CERPEN*
 • ${prefix}cerpen-anak`
 Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
 break
+case 'sistemmenu':
+menuwh =`*SISTEM MENU*
+
+• ${prefix}antilinktg [on/off]
+• ${prefix}antilinktt [on/off]
+• ${prefix}antilinkytch [on/off]
+• ${prefix}antilinkytvid [on/off]
+• ${prefix}antilinkig [on/off]
+• ${prefix}antilinkfb [on/off]
+• ${prefix}antilinktwit [on/off]
+• ${prefix}antilinkall [on/off]
+• ${prefix}antiviewonce [on/off]
+• ${prefix}autosticker [on/off]
+
+• ${prefix}antivirus [on/off]`
+Fara.sendMessage(from, { caption: menuwh, location: { jpegThumbnail: thumbnail }, templateButtons: buttonFitur, footer: miyako, mentions: [sender] })
+break
 case 'rules': case 'snk':
 throw (`*RULES*
 • Mohon untuk tidak spam bot karena bot ini sudah memiliki otomatis blokir bagi pengguna bot yang spam
@@ -1785,30 +2094,30 @@ break
 case 'ytmp4': case 'ytvideo': {
 	addCountCmd('#ytmp4', sender, _cmd)
 if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
-let { ytv } = require('../lib/y2mate')
-if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 360p`
-let quality = args[1] ? args[1] : '360p'
-let media = await ytv(text, quality)
-if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
-Fara.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `âœ‡ Title : ${media.title}\nâœ‡ File Size : ${media.filesizeF}\nâœ‡ Url : ${isUrl(text)}\nâœ‡ Ext : MP4\nâœ‡ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
-}
-limitAdd(sender, limit)
-break
-case 'ytmp3':
+                let { ytv } = require('../lib/y2mate')
+                if (!text) return reply(`Example : ${prefix + command} https://youtube.com/watch?v=RNa4thokVJ4 360p`)
+                if (!isUrl(args[0]) && !args[0].includes('youtube.com')) return reply(`The link you provided is invalid!`)
+                let quality = args[1] ? args[1] : '360p'
+                let media = await ytv(text, quality)
+                if (media.filesize >= 999999) return reply('*File Over Limit* '+util.format(media))
+                var capti = `*YOUTUBE VIDEO*\n\n*❖ Title* : ${media.title}\n*❖ File size* : ${media.filesizeF}\n*❖ Url* : ${isUrl(text)}\n*❖ Ext* : Mp4\n*❖ Resoultion* : ${args[1] || '360p'}`
+                var buf = await getBuffer(media.thumb)
+               Fara.sendMessage(m.chat, { image: { url: media.thumb }, jpegThumbnail:buf, caption: `${capti}` }, { quoted: m })
+               Fara.sendMessage(m.chat, { video: { url: media.dl_link }, jpegThumbnail:buf, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `Here you go!` }, { quoted: m }).catch((err) => reply(mess.error))
+       limitAdd(sender, limit)         
+       }
+            break
+case 'ytmp3':{
 addCountCmd('#ytmp3', sender, _cmd)
 if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
-            if (args.length == 0) return reply(`Example: ${prefix + command} https://www.youtube.com/watch?v=qZIQAk-BUEc`)
-            axios
-                .get(`https://api.lolhuman.xyz/api/ytaudio2?apikey=${lolkey}&url=${args[0]}`)
-                .then(({ data }) => {
-                    var caption = `❖ Title    : *${data.result.title}*\n`
-                    caption += `❖ Size     : *${data.result.size}*`
-                    Fara.sendMessage(from, { image: { url: data.result.thumbnail }, caption }).then(() => {
-                        Fara.sendMessage(from, { audio: { url: data.result.link }, mimetype: 'audio/mp4', fileName: `${data.result.title}.mp3`, ptt: true })
-                    })
-                })
-                .catch(console.error)
-                limitAdd(sender, limit)
+                let { yta } = require('../lib/y2mate')
+                if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 128kbps`
+                let quality = args[1] ? args[1] : '128kbps'
+                let media = await yta(text, quality)
+                if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
+                Fara.sendImage(m.chat, media.thumb, `⭔ Title : ${media.title}\n⭔ File Size : ${media.filesizeF}\n⭔ Url : ${isUrl(text)}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '128kbps'}`, m)
+                Fara.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+            }
             break
 case 'mediafire':
 addCountCmd('#mediafire', sender, _cmd)
@@ -2301,6 +2610,38 @@ await Fara.sendButtonText(m.chat, buttons, `Mode Edit Info`, creator, m)
 }
 }
 break
+case 'autoreadsw': case 'autoreadstatus':
+	if (!isCreator) return reply(mess.owner)
+	if (args[0] == 'on') {
+		if (autoreadsw) return reply('*Already activated!*')
+		autoreadsw = true
+		reply('*Successfully activate auto read status*')
+	} else if (args[0] == 'off') {
+		if (!autoreadsw) return reply('*Already deactivated!*')
+		autoreadsw = false
+		reply('*Successfully turn off auto read status*')
+	} else {
+		reply('Choose on or off!')
+	}
+	break
+case 'antiviewonce': case 'antionce':
+        if (!m.key.fromMe && !isCreator) return reply(mess.owner)
+        if (args[0] === "on") {
+      	if (global.db.data.chats[m.chat].antionce) return reply(`Already activated`)
+        global.db.data.chats[m.chat].antionce = true
+        reply(`${command} Successfully Activated !`)
+        } else if (args[0] === "off") {
+        	if (!global.db.data.chats[m.chat].antionce) return reply(`Already deactivated`)
+        global.db.data.chats[m.chat].antionce = false
+        reply(`${command} Successfully Deactivated !`)
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  break
 case 'antilink': {
 if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
@@ -2322,7 +2663,335 @@ await Fara.sendButtonText(m.chat, buttons, `Mode Antilink`, creator, m)
 }
 }
 break
+case 'antilinkyoutubevideo': case 'antilinkyoutubevid': case 'antilinkytvid': {
 
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkYoutubeVid) return reply('Already activated')
+ntilinkytvid.push(from)
+reply('Success in turning on youtube video antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the youtube video link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkYoutubeVid) return reply('Already deactivated')
+let off = ntilinkytvid.indexOf(from)
+ntilinkytvid.splice(off, 1)
+reply('Success in turning off youtube video antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+    case 'antilinkyoutubech': case 'antilinkyoutubechannel': case 'antilinkytch': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkYoutubeChannel) return reply('Already activated')
+ntilinkytch.push(from)
+reply('Success in turning on youtube channel antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the youtube channel link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkYoutubeChannel) return reply('Already deactivated')
+let off = ntilinkytch.indexOf(from)
+ntilinkytch.splice(off, 1)
+reply('Success in turning off youtube channel antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+      case 'antilinkinstagram': case 'antilinkig': case 'antilinkinsta': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkInstagram) return reply('Already activated')
+ntilinkig.push(from)
+reply('Success in turning on instagram antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the instagram link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkInstagram) return reply('Already deactivated')
+let off = ntilinkig.indexOf(from)
+ntilinkig.splice(off, 1)
+reply('Success in turning off instagram antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+        case 'antilinkfacebook': case 'antilinkfb': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkFacebook) return reply('Already activated')
+ntilinkfb.push(from)
+reply('Success in turning on facebook antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the facebook link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkFacebook) return reply('Already deactivated')
+let off = ntilinkfb.indexOf(from)
+ntilinkfb.splice(off, 1)
+reply('Success in turning off facebook antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+          case 'antilinktelegram': case 'antilinktg': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkTelegram) return reply('Already activated')
+ntilinktg.push(from)
+reply('Success in turning on telegram antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the telegram link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkTelegram) return reply('Already deactivated')
+let off = ntilinkig.indexOf(from)
+ntilinkig.splice(off, 1)
+reply('Success in turning off telegram antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+            case 'antilinktiktok': case 'antilinktt': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkTiktok) return reply('Already activated')
+ntilinktt.push(from)
+reply('Success in turning on tiktok antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the tiktok link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkTiktok) return reply('Already deactivated')
+let off = ntilinktt.indexOf(from)
+ntilinktt.splice(off, 1)
+reply('Success in turning off tiktok antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+            case 'antilinktwt': case 'antilinktwitter': case 'antilinktwit': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkTwitter) return reply('Already activated')
+ntilinktwt.push(from)
+reply('Success in turning on twitter antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send the twitter link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkTwitter) return reply('Already deactivated')
+let off = ntilinktwt.indexOf(from)
+ntilinktwt.splice(off, 1)
+reply('Success in turning off twitter antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+              case 'antilinkall': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (AntiLinkTwitter) return reply('Already activated')
+ntilinkall.push(from)
+reply('Success in turning on all antilink in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nIf you're not an admin, don't send any link in this group or u will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!AntiLinkAll) return reply('Already deactivated')
+let off = ntilinkall.indexOf(from)
+ntilinkall.splice(off, 1)
+reply('Success in turning off all antilink in this group')
+} else {
+  let buttonsntilink = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntilink, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+case 'antivirus': case 'antivirtex': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (antiVirtex) return reply('Already activated')
+ntvirtex.push(from)
+reply('Success in turning on antivirus in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nNo body is allowed to send virus in this group, member who send will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!antiVirtex) return reply('Already deactivated')
+let off = ntvirtex.indexOf(from)
+ntvirtex.splice(off, 1)
+reply('Success in turning off antivirus this group')
+} else {
+  let buttonsntvirtex = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntvirtex, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+case 'antitoxic': {
+
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (antiToxic) return reply('Already activated')
+nttoxic.push(from)
+reply('Success in turning on antitoxic in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nNobody is allowed to use bad words in this group, one who uses will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!antiToxic) return reply('Already deactivated')
+let off = nttoxic.indexOf(from)
+nttoxic.splice(off, 1)
+reply('Success in turning off antitoxic in this group')
+} else {
+  let buttonsnttoxci = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsnttoxci, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
+case 'antiwame': {
+if (!m.isGroup) return reply(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args[0] === "on") {
+if (antiWame) return reply('Already activated')
+ntwame.push(from)
+reply('Success in turning on antiwame in this group')
+var groupe = await Fara.groupMetadata(from)
+var members = groupe['participants']
+var mems = []
+members.map(async adm => {
+mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
+})
+Fara.sendMessage(from, {text: `\`\`\`「 ⚠️Warning⚠️ 」\`\`\`\n\nNobody is allowed to send wa.me in this group, one who sends will be kicked immediately!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
+} else if (args[0] === "off") {
+if (!antiWame) return reply('Already deactivated')
+let off = nttoxic.indexOf(from)
+ntwame.splice(off, 1)
+reply('Success in turning off antiwame in this group')
+} else {
+  let buttonsntwame = [
+  { buttonId: `${command} on`, buttonText: { displayText: 'On' }, type: 1 },
+  { buttonId: `${command} off`, buttonText: { displayText: 'Off' }, type: 1 }
+  ]
+  await Fara.sendButtonText(m.chat, buttonsntwame, `Please click the button below\n\nOn to enable\nOff to disable`, `${global.botname}`, m)
+  }
+  }
+  break
 case 'mute': {
 if (!m.isGroup) throw mess.group
 if (!isBotAdmins) throw mess.botAdmin
@@ -2862,7 +3531,7 @@ const buff = await getBuffer(`https://api.xteam.xyz/attp?file&text=${encodeURICo
 Fara.sendMessage(from, { sticker : buff}) 
 }
 break
-case 'sticker': case 's': case 'stickergif': case 'sgif': {
+case 'sticker': case 's': case 'stickergif': case 'sgif': case 'stiker':{
 if (!quoted) throw `Balas Video/Image Dengan Caption ${prefix + command}`
 m.reply(mess.wait)
 if (/image/.test(mime)) {
@@ -3090,56 +3759,32 @@ case 'public': {
                 m.reply('Sukses Change To Self Usage')
             }
             break
-            case 'addprem':
-            if (!isCreator && !m.from.key) return m.reply(mess.owner)
-            if (args.length < 1) return m.reply(`Gunakan dengan cara :\n${command} *@tag waktu*\n${command} *nomor waktu*\n\nContoh :\n${command} @tag 30d\n${command} 62895xxxxxxxx 30d`)
-            if (!args[0]) return m.reply(`Mau yang berapa hari?`)
-            if (mentionUser.length !== 0) {
-                addCountCmd('#addprem', sender, _cmd)
-                _prem.addPremiumUser(mentionUser[0], args[2], premium)
-                m.reply('Sukses')
-            } else {
-                var cekap = await Fara.onWhatsApp(args[0]+"@s.whatsapp.net")
-                if (cekap.length == 0) return m.reply(`Masukkan nomer yang valid/terdaftar di WhatsApp`)
-                addCountCmd('#addprem', sender, _cmd)
-                _prem.addPremiumUser(args[0]+'@s.whatsapp.net', args[1], premium)
-                m.reply('Sukses')
-            }
-            break
-            case 'delprem':
-            if (!isCreator && !m.from.key) return m.reply(mess.owner)
-            if (args.length < 1) return m.reply(`Gunakan dengan cara :\n${command} *@tag*\n${command} *nomor*\n\nContoh :\n${command} @tag\n${command} 62895xxxxxxxx`)
-            if (mentionUser.length !== 0){
-                addCountCmd('#delprem', sender, _cmd)
-                premium.splice(_prem.getPremiumPosition(mentionUser[0], premium), 1)
-                fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
-                m.reply('Sukses!')
-            } else {
-                var cekpr = await Fara.onWhatsApp(args[0]+"@s.whatsapp.net")
-                if (cekpr.length == 0) return m.reply(`Masukkan nomer yang valid/terdaftar di WhatsApp`)
-                addCountCmd('#delprem', sender, _cmd)
-                premium.splice(_prem.getPremiumPosition(args[1] + '@s.whatsapp.net', premium), 1)
-                fs.writeFileSync('./database/premium.json', JSON.stringify(premium))
-                m.reply('Sukses!')
-            }
-            break
-case 'listpremium': case 'listprem':
-            addCountCmd('#listpremium', sender, _cmd)
-            let txt = `*List Premium User*\nJumlah : ${premium.length}\n\n`
-            let men = [];
-            for (let i of premium) {
-                men.push(sender)
-                txt += `*ID :* @${sender.split("@")[0]}\n`
-                if (i.expired === 'PERMANENT') {
-                    let cekvip = 'PERMANENT'
-                    txt += `*Expire :* PERMANENT\n\n`
-                } else {
-                    let cekvip = ms(i.expired - Date.now())
-                    txt += `*Expire :* ${cekvip.days} day(s) ${cekvip.hours} hour(s) ${cekvip.minutes} minute(s) ${cekvip.seconds} second(s)\n\n`
-                }
-            }
-            mentions(txt, men, true)
-            break
+case 'addprem':
+if (!m.isGroup) return reply(mess.group)
+if (!m.key.fromMe && !isCreator) return reply(mess.owner)
+bnnd = `${args[0].replace('@', '')}@s.whatsapp.net`
+premium.push(bnnd)
+fs.writeFileSync('./database/premium.json', JSON.stringify(prem))
+reply(`Nomor ${bnnd} Telah Menjadi Premium!`)
+break
+case 'delprem':
+if (!m.isGroup) return reply(mess.group)
+if (!m.key.fromMe && !isCreator) return reply(mess.owner)
+ya = `${args[0].replace('@', '')}@s.whatsapp.net`
+unp = premium.indexOf(ya)
+premium.splice(unp, 1)
+fs.writeFileSync('./database/premium.json', JSON.stringify(prem))
+reply(`Nomor ${ya} Telah Di Hapus Premium!`)
+break
+case 'listpremium':
+if (!m.key.fromMe && !isCreator) return reply(mess.owner)
+teks = '*List Premium*\n\n'
+for (let Fara of premium) {
+teks += `- ${Fara}\n`
+}
+teks += `\n*Total : ${premium.length}*`
+Fara.sendMessage(from, { text: teks.trim() }, 'extendedTextMessage', { quoted: m, contextInfo: { "mentionedJid": premium } })
+break
 case 'sewa':
 addCountCmd('#sewa', sender, _cmd)
 if (!m.key.fromMe && !isCreator) return m.reply(mess.owner)
@@ -3287,29 +3932,40 @@ case 'ssweb':
                 m.reply(data.result)
             })
             break
-            case 'infobot': case 'info': case 'botinfo':
-            
-            const botNumber = Fara.user.id.split(':')[0] + '@s.whatsapp.net'
-            addCountCmd('#infobot', sender, _cmd)
-            var capt = `_*${botname} Information*_
-
-*• Name :* ${Fara.user.name}
-*• Number :* 
-*• Total Pengguna :* ${pendaftar.length}
-*• Prefix :* Multi Prefix
-*• Bot Created On 18 Juni 2020*
-
-_*Special Thanks To :*_
-*• Allah SWT*
-*• Adiwajshing/Baileys*
-*• Rintis ID*`
-            var buts = [
-                { urlButton: { displayText: `Instagram`, url: `https://www.instagram.com/rintiswpameling` } },
-                { quickReplyButton: { displayText: `Donasi`, id: prefix+'donate' } },
-                { quickReplyButton: { displayText: `Owner`, id: prefix+'dev' } }
-            ]
-            Fara.sendMessage(from, { image: thumbnail, caption: capt, footer: miyako, templateButtons: buts })
-            break
+            case 'autosticker':
+            case 'autostiker':
+if (!m.isGroup) return replay(mess.group)
+if (!isBotAdmins) return reply(mess.botAdmin)
+if (!isAdmins && !isCreator) return reply(mess.admin)
+if (args.length < 1) return reply('type auto sticker on to enable\ntype auto sticker off to disable')
+if (args[0]  === 'on'){
+if (isAutoSticker) return reply(`Already activated`)
+autosticker.push(from)
+fs.writeFileSync('./database/autosticker.json', JSON.stringify(autosticker))
+reply('autosticker activated')
+} else if (args[0] === 'off'){
+let anu = autosticker.indexOf(from)
+autosticker.splice(anu, 1)
+fs.writeFileSync('./database/autosticker.json', JSON.stringify(autosticker))
+reply('auto sticker deactivated')
+}
+break
+case 'autostickerpc':
+            case 'autostikerpc':
+if (!m.isGroup) return replay(mess.group)
+if (args.length < 1) return reply('type autosticker on to activate\ntype autosticker off to disable')
+if (args[0]  === 'on'){
+if (isAutoStick) return reply(`Already activated`)
+_autostick.push(from)
+fs.writeFileSync('./database/autostickpc.json', JSON.stringify(autosticker))
+reply('autosticker pc activated')
+} else if (args[0] === 'disable'){
+let anu = autosticker.indexOf(from)
+_autostick.splice(anu, 1)
+fs.writeFileSync('./database/autostickpc.json', JSON.stringify(autosticker))
+reply('autosticker pc deactivated')
+}
+break
 case 'translate':
 addCountCmd('#translate', sender, _cmd)
 if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
@@ -3322,11 +3978,24 @@ m.reply(`> Translate : ${Detek}\n> Hasil : ${Infoo}`)
 limitAdd(sender, limit)
 break
 //STALKER
+case 'igstory': 
+            if(!q) return reply('Usernamenya?')
+            hxz.igstory(q)
+            .then(async result => {
+            for(let i of result.medias){
+                if(i.url.includes('mp4')){
+                    let link = await getBuffer(i.url)
+                    Fara.sendMessage(from,link,video,{quoted: m,caption: `Type : ${i.type}`})
+                } else {
+                    let link = await getBuffer(i.url)
+                    Fara.sendMessage(from,link,image,{quoted: m,caption: `Type : ${i.type}`})                  
+                }
+            }
+            });
+            break
 case 'igstalk':{
-	addCountCmd('#igstalk', sender, _cmd)
-if (isLimit(sender, isPremium, isCreator, limitawal.free, limit)) return m.reply(mess.endLimit)
-if (args.length == 0) return m.reply(`Example: ${prefix + command} namaig`)
-m.reply(mess.wait)
+if (args.length == 0) return replyNya(`Example: ${prefix + command} namaig`)
+reply(mess.wait)
 igk = args.join(" ")
 deshd = await fetchJson(`https://api.lolhuman.xyz/api/stalkig/${igk}?apikey=${lolkey}`)
 deshxs = deshd.result
@@ -3343,17 +4012,17 @@ templateMessage: {
 hydratedTemplate: {
 imageMessage: message.imageMessage,
 hydratedContentText: txt,
-hydratedFooterText: 'Regards : Rintis ID',
+hydratedFooterText: 'Created By Fara',
 hydratedButtons: [{
 urlButton: {
-displayText: 'Group Bot',
-url: 'https://chat.whatsapp.com/BABvK9nnhhJLImFXJaoLg9'
+displayText: 'MyGithub',
+url: 'https://github.com/Fara'
 }
 },
 {
 urlButton: {
 displayText: 'MyOwner',
-url: 'https://wa.me/6281578301106'
+url: 'https://wa.me/6287705048235'
 }
 }]
 }
@@ -3361,7 +4030,6 @@ url: 'https://wa.me/6281578301106'
 }), { userJid: m.chat, quoted: m })
 Fara.relayMessage(m.chat, template.message, { messageId: template.key.id })
 }
-limitAdd(sender, limit)
 break
 case 'supersusstalk': { 
 	addCountCmd('#supersusstalk', sender, _cmd)
@@ -5453,6 +6121,16 @@ let cerpe = await cerpen(`sejarah`)
 reply(`â­” _*Title :*_ ${cerpe.title}\nâ­” _*Author :*_ ${cerpe.author}\nâ­” _*Category :*_ ${cerpe.kategori}\nâ­” _*Pass Moderation :*_ ${cerpe.lolos}\nâ­” _*Story :*_\n${cerpe.cerita}`)
 }
 break
+
+//VID MENU
+
+case 'hentaivid': case 'hentaivideo': {
+                reply(mess.wait)
+                anu = await hentai()
+                result912 = anu[Math.floor(Math.random(), anu.length)]
+                Fara.sendMessage(m.chat, { video: { url: result912.video_1 }, caption: `${dogeemoji} Title : ${result912.title}\n${dogeemoji} Category : ${result912.category}\n${dogeemoji} Mimetype : ${result912.type}\n${dogeemoji} Views : ${result912.views_count}\n${dogeemoji} Shares : ${result912.share_count}\n${dogeemoji} Source : ${result912.link}\n${dogeemoji} Media Url : ${result912.video_1}` }, { quoted: m })
+            }
+            break
 //━━━━━━━━━━━━━━━[ AKHIR FITUR ]━━━━━━━━━━━━━━━━━//
 
 default:

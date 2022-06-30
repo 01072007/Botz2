@@ -1,4 +1,4 @@
-  const { getBuffer } = require('../function.js')
+  const { getBuffer } = require('../response/function.js')
   const groupResponse = async (sock, update) => {
    const metadata = await sock.groupMetadata(update.id)   
    for (let participant of update.participants) {
