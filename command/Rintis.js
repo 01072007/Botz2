@@ -4022,7 +4022,7 @@ url: 'https://github.com/Fara'
 {
 urlButton: {
 displayText: 'MyOwner',
-url: 'https://wa.me/6287705048235'
+url: 'https://wa.me/6281578301106'
 }
 }]
 }
